@@ -5,6 +5,7 @@
 #include "InitError.hpp"
 #include "Util.hpp"
 #include <SDL_image.h>
+#include "State.hpp"
 
 class SDL {
 	SDL_Window* m_window;
@@ -40,14 +41,34 @@ void SDL::draw() {
 	
 	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
 	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
-	SDL_FreeSurface(bg);
 	SDL_Rect full = util::rect(0,0,1920,1080);
 
-	while (true) {
+	bg = IMG_Load("assets/actionfieldBg1.png");
+	SDL_Texture * MenuBgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
+	SDL_FreeSurface(bg);
+
+	SDL_Rect MenuBgTextureRect = {690,0,540,1080};
+
+	bool quit =	false;
+
+	State state = new Menu();
+	
+	while (!quit) {
+		SDL_Event e;
+		if (SDL_PollEvent(&e) != 0){
+			if (e.type == SDL_QUIT) {
+				SDL_Quit();
+				quit = true;
+			}
+		}
+
+
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
 
-		SDL_RenderCopy(m_renderer, bgTexture, &full, &full);
+		SDL_RenderCopy(m_renderer, bgTexture, NULL,NULL);
+
+	
 
 		SDL_RenderPresent(m_renderer);
 		
