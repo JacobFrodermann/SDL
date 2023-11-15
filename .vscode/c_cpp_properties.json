@@ -13,15 +13,7 @@
             "cStandard": "c17",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64",
-            "compilerArgs": [
-                "-Wall",
-                "-I/usr/include/SDL2",
-                "-D_REENTRANT",
-                "-g",
-                "-L/usr/lib",
-                "-lSDL2",
-                "-lSDL2_image"
-            ],
+            "compilerArgs": [],
             "configurationProvider": "ms-vscode.makefile-tools"
         }
     ],

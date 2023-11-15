@@ -5,7 +5,7 @@
 #include "InitError.hpp"
 #include "Util.hpp"
 #include <SDL_image.h>
-#include "State.hpp"
+#include "Menu.hpp"
 #include <memory>
 
 class SDL {
@@ -29,7 +29,7 @@ SDL::SDL(Uint32 flags) {
 	if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
 		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 	}
-
+	
 }
 
 SDL::~SDL() {
@@ -42,19 +42,12 @@ void SDL::draw() {
 	
 	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
 	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
-	SDL_Rect full = util::rect(0,0,1920,1080);
-
-	bg = IMG_Load("assets/actionfieldBg1.png");
-	SDL_Texture * MenuBgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
-	SDL_FreeSurface(bg);
-
-	
 
 	bool quit =	false;
 
 	std::unique_ptr<State> state = std::make_unique<Menu>();
-	state.get()->init(m_renderer);
-	
+	state->init(m_renderer);
+	std::cout << "2" << std::endl;
 	
 	while (!quit) {
 		SDL_Event e;
@@ -71,7 +64,7 @@ void SDL::draw() {
 
 		SDL_RenderCopy(m_renderer, bgTexture, NULL,NULL);
 
-		int todo = state.get()->draw(m_renderer);
+		//int todo = state->draw(m_renderer);
 
 		SDL_RenderPresent(m_renderer);
 		
