@@ -2,8 +2,9 @@
 #include <string>
 #include <iostream>
 #include <SDL.h>
-#include "InitError.h"
-
+#include "InitError.hpp"
+#include "Util.hpp"
+#include <SDL_image.h>
 
 class SDL {
 	SDL_Window* m_window;
@@ -15,12 +16,18 @@ public:
 };
 
 SDL::SDL(Uint32 flags) {
-	if (SDL_Init(flags) != 0)
-		throw InitError();
+	if (SDL_Init(flags) != 0)throw InitError();
 
-	if (SDL_CreateWindowAndRenderer(640, 480, SDL_WINDOW_SHOWN,
-		&m_window, &m_renderer) != 0)
-		throw InitError();
+	if (SDL_CreateWindowAndRenderer(1920, 1080, SDL_WINDOW_SHOWN, &m_window, &m_renderer) != 0) throw InitError();
+
+    SDL_SetWindowFullscreen(m_window, true);
+    SDL_ShowCursor(true);
+
+	int imgFlags = IMG_INIT_PNG;
+	if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
+		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
+	}
+
 }
 
 SDL::~SDL() {
@@ -30,42 +37,22 @@ SDL::~SDL() {
 }
 
 void SDL::draw() {
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-	SDL_RenderClear(m_renderer);
-
-	// Show the window
-	SDL_RenderPresent(m_renderer);
-
-	SDL_SetRenderDrawColor(m_renderer, 255, 255, 255, 255);
-	SDL_RenderClear(m_renderer);
-
-	SDL_Rect line;
-	line.x=30;
-	line.w=580;
-	line.h=4;
-	line.y=30;
-
-	SDL_SetRenderDrawColor(m_renderer, 0,0,0,255);
 	
-	SDL_RenderFillRect(m_renderer, &line);
+	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
+	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
+	SDL_FreeSurface(bg);
+	SDL_Rect full = util::rect(0,0,1920,1080);
 
-	line.y=450;
+	while (true) {
+		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
+		SDL_RenderClear(m_renderer);
 
-	SDL_RenderFillRect(m_renderer, &line);
+		SDL_RenderCopy(m_renderer, bgTexture, &full, &full);
 
-	line.h=424;
-	line.y=30;
-	line.w=4;
-
-	SDL_RenderFillRect(m_renderer, &line);
-
-	line.x=610;
-
-	SDL_RenderFillRect(m_renderer, &line);
-
-	SDL_RenderPresent(m_renderer);
-
-	SDL_Delay(5000);
+		SDL_RenderPresent(m_renderer);
+		
+		SDL_Delay(60);
+	}
 }
 
 int main(int argc, char* argv[]) {

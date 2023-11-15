@@ -1,4 +1,4 @@
-#include "InitError.h" 
+#include "InitError.hpp" 
 #include <SDL.h>
 
 InitError::InitError() :
