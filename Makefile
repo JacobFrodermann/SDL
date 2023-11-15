@@ -11,8 +11,8 @@ Util.o: src/Util.cpp
 	$(CC) $(CFLAGS) src/Util.cpp -o obj/Util.o
 Menu.o: src/Menu.cpp
 	$(CC) $(CFLAGS) src/Menu.cpp -o obj/Menu.o
-build: main.o InitError.o Util.o
-	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/main.o -o bin/sdl
+build: main.o InitError.o Util.o Menu.o
+	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/Menu.o obj/main.o -o bin/sdl
 run: build
 	./bin/sdl
 all: build

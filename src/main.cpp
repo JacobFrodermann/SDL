@@ -6,6 +6,7 @@
 #include "Util.hpp"
 #include <SDL_image.h>
 #include "State.hpp"
+#include <memory>
 
 class SDL {
 	SDL_Window* m_window;
@@ -47,11 +48,13 @@ void SDL::draw() {
 	SDL_Texture * MenuBgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
 	SDL_FreeSurface(bg);
 
-	SDL_Rect MenuBgTextureRect = {690,0,540,1080};
+	
 
 	bool quit =	false;
 
-	State state = new Menu();
+	std::unique_ptr<State> state = std::make_unique<Menu>();
+	state.get()->init(m_renderer);
+	
 	
 	while (!quit) {
 		SDL_Event e;
@@ -68,7 +71,7 @@ void SDL::draw() {
 
 		SDL_RenderCopy(m_renderer, bgTexture, NULL,NULL);
 
-	
+		int todo = state.get()->draw(m_renderer);
 
 		SDL_RenderPresent(m_renderer);
 		

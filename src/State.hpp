@@ -2,13 +2,15 @@
 
 class State {
     public:
-        virtual bool draw(SDL_Renderer* m_renderer);
-        virtual int  init(SDL_Renderer* m_renderer);
+        virtual ~State() = default;
+        virtual int draw(SDL_Renderer* renderer);
+        virtual int init(SDL_Renderer* renderer);
 };
 
-class Menu : public State {
+class Menu : public State {  
     public:
-        bool draw(SDL_Renderer* m_renderer);
+        virtual ~Menu() = default;
+        int draw(SDL_Renderer* renderer);
         int init(SDL_Renderer* renderer);
     private:
         SDL_Texture* BgTexture;

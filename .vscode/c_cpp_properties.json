@@ -5,7 +5,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/include/SDL2",
-                "/usr/include/",
+                "/usr/include/**",
+                "/usr/include/SDL2/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",
@@ -13,8 +14,13 @@
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-x64",
             "compilerArgs": [
+                "-Wall",
+                "-I/usr/include/SDL2",
+                "-D_REENTRANT",
+                "-g",
+                "-L/usr/lib",
                 "-lSDL2",
-                "-L/usr/lib"
+                "-lSDL2_image"
             ],
             "configurationProvider": "ms-vscode.makefile-tools"
         }
