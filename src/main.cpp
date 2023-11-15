@@ -47,24 +47,23 @@ void SDL::draw() {
 
 	std::unique_ptr<State> state = std::make_unique<Menu>();
 	state->init(m_renderer);
-	std::cout << "2" << std::endl;
 	
 	while (!quit) {
-		SDL_Event e;
-		if (SDL_PollEvent(&e) != 0){
-			if (e.type == SDL_QUIT) {
-				SDL_Quit();
-				quit = true;
-			}
-		}
-
-
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
 
 		SDL_RenderCopy(m_renderer, bgTexture, NULL,NULL);
 
-		//int todo = state->draw(m_renderer);
+		int todo = state->draw(m_renderer);
+
+		switch (todo) {
+		case SDL_QUIT:
+            SDL_Quit();
+			break;
+		
+		default:
+			break;
+		}
 
 		SDL_RenderPresent(m_renderer);
 		
