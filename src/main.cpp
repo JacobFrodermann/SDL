@@ -37,7 +37,7 @@ SDL::~SDL() {
 	SDL_DestroyRenderer(m_renderer);
 	SDL_Quit();
 }
-
+	
 void SDL::draw() {
 	
 	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
@@ -58,9 +58,11 @@ void SDL::draw() {
 
 		switch (todo) {
 		case SDL_QUIT:
+			quit = true;
             SDL_Quit();
 			break;
-		
+		case GAME_STATE:
+			std::cout << "Game" << std::endl;
 		default:
 			break;
 		}

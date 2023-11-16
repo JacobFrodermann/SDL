@@ -5,8 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/usr/include/SDL2",
-                "/usr/include/**",
-                "/usr/include/SDL2/**"
+                "/usr/include/**"
             ],
             "defines": [],
             "compilerPath": "/usr/bin/g++",

@@ -13,8 +13,10 @@ Menu.o: src/Menu.cpp
 	$(CC) $(CFLAGS) src/Menu.cpp -o obj/Menu.o
 State.o: src/State.cpp
 	$(CC) $(CFLAGS) src/State.cpp -o obj/State.o
+Menu.o : src/Menu.cpp
+	$(CC) $(CFLAGS) src/Game.cpp -o obj/Game.o
 build: main.o InitError.o Util.o Menu.o State.o
-	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Menu.o obj/main.o -o bin/sdl
+	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Game.o obj/Menu.o obj/main.o -o bin/sdl
 run: build
 	./bin/sdl
 all: build
