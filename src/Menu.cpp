@@ -23,10 +23,12 @@ int Menu::draw(SDL_Renderer * renderer) {
     int mouseX = 0, mouseY = 0;
     SDL_Event e;
     while (SDL_PollEvent(&e) != 0){
+        std::count << "e " << std::endl;
         if (e.type == SDL_QUIT) {
             ret = SDL_QUIT;
         }
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
+        if (e.type == SDL_MOUSEBUTTONDOWN) 
+            std::count << "click " << std::endl;
             SDL_GetMouseState(&mouseX, &mouseY);
             SDL_Point p = {mouseX, mouseY};
             if (util::contains(this->StartRect,p)) {
@@ -42,5 +44,4 @@ int Menu::draw(SDL_Renderer * renderer) {
 Menu::~Menu() {
     SDL_DestroyTexture(this->BgTexture);
     SDL_DestroyTexture(this->StartTexture);
-    //free(this->StartRect);
 }

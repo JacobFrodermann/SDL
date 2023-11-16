@@ -1,6 +1,6 @@
-#if (!State)
-	#include "State.hpp"
-#endif
+#pragma once
+#include "State.hpp"
+#include <vector>
 
 class Game : public State {  
 	public:
@@ -10,5 +10,10 @@ class Game : public State {
 	private:
 		SDL_Texture* BgTexture;
 		SDL_Texture* ShipsTexture;
-		SDL_Rect BgRect;
+		SDL_Rect BgRect, ShipRect, ShipSrcRect;
+		float BgYOffset;
+		float VelX, VelY, anim;
+		int *X, *Y;
+		bool dead;
+		std::vector<int> pressed;
 };

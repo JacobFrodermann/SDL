@@ -1,3 +1,4 @@
+#pragma once
 #if (!SDL)
     #include <SDL.h>
 #endif

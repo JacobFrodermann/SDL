@@ -7,6 +7,8 @@
 #include <SDL_image.h>
 #include "Menu.hpp"
 #include <memory>
+#include "Game.hpp"
+#include <chrono>
 
 class SDL {
 	SDL_Window* m_window;
@@ -24,12 +26,12 @@ SDL::SDL(Uint32 flags) {
 
     SDL_SetWindowFullscreen(m_window, true);
     SDL_ShowCursor(true);
+	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "2" );
 
 	int imgFlags = IMG_INIT_PNG;
 	if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
 		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
 	}
-	
 }
 
 SDL::~SDL() {
@@ -39,16 +41,24 @@ SDL::~SDL() {
 }
 	
 void SDL::draw() {
-	
+	auto now = std::chrono::high_resolution_clock::now();
 	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
 	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
 
 	bool quit =	false;
+	int stateCode = MENU_STATE;
 
-	std::unique_ptr<State> state = std::make_unique<Menu>();
+	std::shared_ptr<State> state = std::make_shared<Menu>();
 	state->init(m_renderer);
+
+	std::shared_ptr<State> game = std::make_shared<Game>();
+	game->init(m_renderer);
+
+	std::shared_ptr<State> menu;
+
 	
 	while (!quit) {
+		auto then = std::chrono::high_resolution_clock::now();
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
 
@@ -63,13 +73,21 @@ void SDL::draw() {
 			break;
 		case GAME_STATE:
 			std::cout << "Game" << std::endl;
+			if (stateCode == MENU_STATE) {
+				state.swap(game);
+				game.swap(menu);
+			}
+			stateCode = GAME_STATE;
+			
 		default:
 			break;
 		}
 
 		SDL_RenderPresent(m_renderer);
-		
-		SDL_Delay(60);
+
+		auto now = std::chrono::system_clock::now();		
+		int passed = 1000/40 - std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
+		SDL_Delay((passed < 0) ? 0 : passed);
 	}
 }
 
