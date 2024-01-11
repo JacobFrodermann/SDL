@@ -20,8 +20,8 @@ State.o: setup src/State.cpp
 Game.o : setup src/Game.cpp
 	$(CC) $(CFLAGS) src/Game.cpp -o obj/Game.o
 build: setup main.o InitError.o Util.o Menu.o State.o Game.o
-	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Game.o obj/Menu.o obj/main.o -o bin/sdl
+	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Game.o obj/Menu.o obj/main.o -o bin/AsteroidShooter
 run: build
-	./bin/sdl
+	./bin/AsteroidShooter
 all: build
 
