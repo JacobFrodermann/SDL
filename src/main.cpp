@@ -1,5 +1,3 @@
-#include <exception>
-#include <string>
 #include <iostream>
 #include <SDL.h>
 #include "InitError.hpp"
@@ -9,6 +7,7 @@
 #include <memory>
 #include "Game.hpp"
 #include <chrono>
+#include "Settings.hpp"
 
 class SDL {
 	SDL_Window* m_window;
@@ -86,7 +85,7 @@ void SDL::draw() {
 		SDL_RenderPresent(m_renderer);
 
 		auto now = std::chrono::system_clock::now();		
-		int passed = 1000/40 - std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
+		int passed = 1000/FRAMERATE - std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
 		SDL_Delay((passed < 0) ? 0 : passed);
 	}
 }
@@ -103,6 +102,5 @@ int main(int argc, char* argv[]) {
 			<< err.what()
 			<< std::endl;
 	}
-
 	return 1;
 }

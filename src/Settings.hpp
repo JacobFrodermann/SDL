@@ -1,0 +1,4 @@
+#define STEERING_MOD .15
+#define FRICTION_MOD 1.25
+#define ACCEL_MOD 7.5
+#define FRAMERATE 30

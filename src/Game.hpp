@@ -12,8 +12,7 @@ class Game : public State {
 		SDL_Texture* ShipsTexture;
 		SDL_Rect BgRect, ShipRect, ShipSrcRect;
 		float BgYOffset;
-		float VelX, VelY, anim;
-		int *X, *Y;
+		float VelX, VelY, anim, rot,X,Y;
 		bool dead;
 		std::vector<int> pressed;
 };
