@@ -1,7 +1,6 @@
 #include <iostream>
 #include <SDL.h>
 #include "InitError.hpp"
-#include "Util.hpp"
 #include <SDL_image.h>
 #include "Menu.hpp"
 #include <memory>
@@ -23,7 +22,7 @@ SDL::SDL(Uint32 flags) {
 
 	if (SDL_CreateWindowAndRenderer(1920, 1080, SDL_WINDOW_SHOWN, &m_window, &m_renderer) != 0) throw InitError();
 
-    SDL_SetWindowFullscreen(m_window, true);
+    //SDL_SetWindowFullscreen(m_window, true);
     SDL_ShowCursor(true);
 	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "2" );
 
@@ -40,7 +39,6 @@ SDL::~SDL() {
 }
 	
 void SDL::draw() {
-	auto now = std::chrono::high_resolution_clock::now();
 	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
 	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
 

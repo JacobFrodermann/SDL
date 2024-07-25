@@ -2,3 +2,5 @@
 #define FRICTION_MOD 1.25
 #define ACCEL_MOD 7.5
 #define FRAMERATE 30
+#define BEAMSPEED 15
+#define BEAMCOOLDOWN 20
