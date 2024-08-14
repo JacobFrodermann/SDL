@@ -1,5 +1,5 @@
 CFLAGS=-c -Wall -I/usr/include/SDL2 -D_REENTRANT -g 
-LDFLAGS= -L/usr/lib -lSDL2 -lSDL2_image
+LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -lyuv -lSDL2 -lSDL2_image
 CC=g++
 
 setup:
@@ -20,6 +20,8 @@ State.o: setup src/State.cpp
 Game.o : setup src/Game.cpp
 	$(CC) $(CFLAGS) src/Game.cpp -o obj/Game.o
 build: setup main.o InitError.o Util.o Menu.o State.o Game.o
+	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Game.o obj/Menu.o obj/main.o -o bin/AsteroidShooter
+link:
 	$(CC) $(LDFLAGS) obj/Util.o obj/InitError.o obj/State.o obj/Game.o obj/Menu.o obj/main.o -o bin/AsteroidShooter
 run: build
 	./bin/AsteroidShooter

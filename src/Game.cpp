@@ -7,7 +7,14 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
+#include <ostream>
+#include <vector>
+#include "SDL_surface.h"
 #include "Settings.hpp"
+#include "Util.hpp"
+#include "Beam.hpp"
+#include <iostream>
+#include "Asteroid.hpp"
 
 int Game::init(SDL_Renderer * renderer) {
 	SDL_Surface * surface = IMG_Load("assets/GameBG.png");
@@ -16,24 +23,33 @@ int Game::init(SDL_Renderer * renderer) {
 	surface = IMG_Load("assets/Ships.png");
 	this->ShipsTexture = SDL_CreateTextureFromSurface(renderer,surface);
 	SDL_FreeSurface(surface);
+	surface = IMG_Load("assets/beam.png");
+	this->BeamTexture = SDL_CreateTextureFromSurface(renderer, surface);
+	SDL_FreeSurface(surface);
+	surface = IMG_Load("assets/asteriodAtlas.png");
+	this->AsteroidsTexture = SDL_CreateTextureFromSurface(renderer, surface);
+
+
 	this->BgRect = {690,0,540,2160};
-	BgYOffset = 0;
+	BackgroundOffset = 0;
 	VelX = 0;
 	VelY = 0;
 	ShipRect = {920,900,60,90};
 	X = ShipRect.x;
 	Y = ShipRect.y;
-	anim = 0;
+	animationState = 0;
 	dead = false;
 	ShipSrcRect = {0,0,40,60};
 	pressed = {};
-	rot = M_PI;
+	rotation = M_PI;
+	BeamCD=0;
 	return 0;
 }
 
 int Game::draw(SDL_Renderer * renderer) {
 	int ret = 0;
 	SDL_Event e;
+	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 	while (SDL_PollEvent(&e) != 0){
 		if (e.type == SDL_QUIT) {
 			ret = SDL_QUIT;
@@ -44,12 +60,14 @@ int Game::draw(SDL_Renderer * renderer) {
 		}
 	}
 
-	if(std::find(pressed.begin(), pressed.end(), SDLK_UP) != pressed.end()) {
-		VelY += ACCEL_MOD * cos(rot);
-		VelX += ACCEL_MOD * sin(rot);
+	if(util::isPressed(pressed, SDLK_UP)) {
+		VelY += ACCEL_MOD * cos(rotation);
+		VelX += ACCEL_MOD * sin(rotation);
 	}
-	if(std::find(pressed.begin(), pressed.end(), SDLK_LEFT ) != pressed.end()) {rot += STEERING_MOD;}
-	if(std::find(pressed.begin(), pressed.end(), SDLK_RIGHT) != pressed.end()) {rot -= STEERING_MOD;}
+	if(util::isPressed(pressed, SDLK_LEFT)) {rotation += STEERING_MOD;}
+	if(util::isPressed(pressed,SDLK_RIGHT)) {rotation -= STEERING_MOD;}
+	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) {Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN; Beam::filter();}
+	BeamCD--;
 	X += VelX/1.5;
 	Y += VelY/1.5;
 	VelX = VelX / FRICTION_MOD;
@@ -58,23 +76,39 @@ int Game::draw(SDL_Renderer * renderer) {
 
 	ShipRect.x = X;
 	ShipRect.y = Y;
+	
+	BackgroundOffset -= .1f;
+	animationState += .05f;
+	if ((int) animationState == 4) animationState = 0; //reset animation before 5
 
-	BgYOffset -= .1f;
-	anim += .05f;
-	if ((int) anim == 4) anim = 0; //reset animation before 5
+	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
 
-	ShipSrcRect.y = (int) anim * 60; //move Rect to fitting image
 
-	this->BgRect.y = (int) BgYOffset;
 
-	SDL_RenderCopy(renderer, BgTexture, NULL, &BgRect);
-	SDL_RenderCopyEx(renderer, ShipsTexture, &ShipSrcRect, &ShipRect,(rot-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
+	//this->BgRect.y = (int) BackgroundOffset;
+
+	//SDL_RenderCopy(renderer, BgTexture, NULL, &BgRect);
+	Asteroid::spawn();
+	for (Asteroid &a : Asteroid::asteroids) {
+		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
+		//std::cout << "Asteroid at (" << a.X << "," << a.Y << ")" << std::endl; 
+		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
+		a.tick();
+	}
+
+	for (Beam &b : Beam::beams) {
+		SDL_Rect dst = b.getDstRect();
+		SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst, (b.rot-M_PI)*-180/M_PI, NULL, SDL_FLIP_NONE);
+		b.tick();
+	}
+
+	SDL_RenderCopyEx(renderer, ShipsTexture, &ShipSrcRect, &ShipRect,(rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
 
 	return ret;
-	
 }
 
 Game::~Game() {
 	SDL_DestroyTexture(this->BgTexture);
 	SDL_DestroyTexture(this->ShipsTexture);
+	SDL_DestroyTexture(this->BeamTexture);
 }
