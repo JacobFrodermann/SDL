@@ -10,6 +10,9 @@
 #include <ostream>
 #include <vector>
 #include "SDL_surface.h"
+#include <ostream>
+#include <vector>
+#include "SDL_surface.h"
 #include "Settings.hpp"
 #include "Util.hpp"
 #include "Beam.hpp"
@@ -81,6 +84,7 @@ int Game::draw(SDL_Renderer * renderer) {
 	animationState += .05f;
 	if ((int) animationState == 4) animationState = 0; //reset animation before 5
 
+	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
 	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
 
 

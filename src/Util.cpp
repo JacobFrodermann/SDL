@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <algorithm>
 #include <vector>
+#include <algorithm>
+#include <vector>
 #include "Util.hpp"
 
 SDL_Rect util::rect(int x, int y, int w, int h) {

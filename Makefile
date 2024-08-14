@@ -12,9 +12,6 @@ compile: setup
 	done
 link: compile
 	$(CC) $(LDFLAGS) obj/* -o bin/AsteroidShooter
-just-link:
-	$(CC) $(LDFLAGS) obj/* -o bin/AsteroidShooter
 run: link
 	./bin/AsteroidShooter
 all: build
-
