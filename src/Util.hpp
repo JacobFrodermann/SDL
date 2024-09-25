@@ -1,6 +1,9 @@
 #pragma once
+#include "SDL_render.h"
 #include <SDL.h>
 #include <vector>
+#include <SDL_image.h>
+#include <string>
 
 class util {
     public:
@@ -8,4 +11,5 @@ class util {
     static bool contains(SDL_Rect rect, SDL_Point point);
     static bool isPressed(std::vector<int> pressed, SDL_KeyCode key);
     static float random_float(float min, float max);
+    static SDL_Texture* loadTexuture(std::string name, SDL_Renderer* renderer);
 };

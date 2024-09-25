@@ -13,9 +13,6 @@ class Game : public State {
 		float BackgroundOffset;
 		float VelX, VelY, animationState, rotation,X,Y;
 		int BeamCD;
-		float BackgroundOffset;
-		float VelX, VelY, animationState, rotation,X,Y;
-		int BeamCD;
 		bool dead;
 		std::vector<int> pressed;
 };

@@ -7,33 +7,22 @@
 #include <algorithm>
 #include <cmath>
 #include <cstddef>
-#include <ostream>
 #include <vector>
-#include "SDL_surface.h"
-#include <ostream>
 #include <vector>
-#include "SDL_surface.h"
 #include "Settings.hpp"
 #include "Util.hpp"
 #include "Beam.hpp"
-#include <iostream>
 #include "Asteroid.hpp"
 
 int Game::init(SDL_Renderer * renderer) {
-	SDL_Surface * surface = IMG_Load("assets/GameBG.png");
-	this->BgTexture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-	surface = IMG_Load("assets/Ships.png");
-	this->ShipsTexture = SDL_CreateTextureFromSurface(renderer,surface);
-	SDL_FreeSurface(surface);
-	surface = IMG_Load("assets/beam.png");
-	this->BeamTexture = SDL_CreateTextureFromSurface(renderer, surface);
-	SDL_FreeSurface(surface);
-	surface = IMG_Load("assets/asteriodAtlas.png");
-	this->AsteroidsTexture = SDL_CreateTextureFromSurface(renderer, surface);
+	this->BgTexture = util::loadTexuture("assets/GameBG.png", renderer);
+	this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
+	this->BeamTexture = util::loadTexuture("assets/beam.png",renderer);
+	this->AsteroidsTexture = util::loadTexuture("assets/asteriodAtlas.png", renderer);
 
 
 	this->BgRect = {690,0,540,2160};
+
 	BackgroundOffset = 0;
 	VelX = 0;
 	VelY = 0;

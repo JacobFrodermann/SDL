@@ -1,5 +1,5 @@
 CFLAGS=-c -Wall -I/usr/include/SDL2 -D_REENTRANT -g 
-LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -lyuv -lSDL2 -lSDL2_image
+LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image
 CC=g++
 
 setup:
@@ -14,4 +14,4 @@ link: compile
 	$(CC) $(LDFLAGS) obj/* -o bin/AsteroidShooter
 run: link
 	./bin/AsteroidShooter
-all: build
+all: link

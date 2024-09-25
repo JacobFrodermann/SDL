@@ -4,7 +4,7 @@
 
 class Beam {
     public:
-        float X,Y,VelX,VelY,rot;
+        float X,Y,VelX,VelY,rot; 
         int age;
         static std::vector<Beam> beams;
         static void shoot(float X,float Y,float rotation);
