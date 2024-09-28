@@ -1,18 +1,20 @@
 #include "Asteroid.hpp"
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <iostream>
+#include <iterator>
 #include <vector>
 #include "SDL_rect.h"
 #include "Util.hpp"
 #include "Settings.hpp"
 
-std::vector<Asteroid> Asteroid::asteroids = {}; //initalize the Vector
+std::vector<Asteroid> Asteroid::asteroids = {};
 
 Asteroid::Asteroid() {
     w = 107;
     h = 112;
     radius = 50;
+    health = ASTEROIDHEALTH;
     rs = util::random_float(.1, 2);
     skin = std::rand() % 64;
     rot = util::random_float(5.5,7);
@@ -50,11 +52,24 @@ void Asteroid::tick() {
     rot += rs;
 }
 void Asteroid::filter() {
-    for (Asteroid i : asteroids) {
-        
-    }
+    std::vector<Asteroid> temp = {};
+    std::copy_if(asteroids.begin(), asteroids.end(), std::back_inserter(temp),[](Asteroid a) -> bool{
+        if (a.health <= 0) {
+            return false;
+        };
+        return a.X < 2000 && a.X > -200 && a.Y < 1200 && a.Y > -200;
+    });
+    asteroids = temp;
 }  
 
 bool Asteroid::intersects(SDL_Point p) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
-    return std::pow((X - (X+w/2)),2) + std::pow((Y - (Y+w/2)),2) < std::pow(1,2); 
+    return util::inCircle(SDL_Point{
+        static_cast<int>(X+w/2),
+        static_cast<int>(Y+h/2)
+    }, radius, p); 
+}
+
+void Asteroid::damage() {
+    health --;
+    Asteroid::filter();
 }

@@ -101,11 +101,10 @@ Game::~Game() {
 
 void Game::doCollisions() {
 	for (Beam &b : Beam::beams) {
-		SDL_Point* points = b.getPoints();
 		for (Asteroid &a : Asteroid::asteroids) {
-			bool notHit = a.intersects(points[0]);
-			notHit = notHit && a.intersects(points[1]);
-			if (!notHit) {
+			bool hit = a.intersects(b.points[0]);
+			hit = hit || a.intersects(b.points[1]);
+			if (hit) {
 				b.X = 10000; // move out of bounds
 				a.damage();
 			}
@@ -134,7 +133,11 @@ void Game::handleKeyPresses() {
 		VelY += ACCEL_MOD * cos(rotation);
 		VelX += ACCEL_MOD * sin(rotation);
 	}
-	if(util::isPressed(pressed, SDLK_LEFT)) {rotation += STEERING_MOD;}
-	if(util::isPressed(pressed,SDLK_RIGHT)) {rotation -= STEERING_MOD;}
-	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) {Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN;}
+	if(util::isPressed(pressed, SDLK_LEFT)) 				{ rotation += STEERING_MOD;	}
+	if(util::isPressed(pressed, SDLK_RIGHT)) 				{ rotation -= STEERING_MOD;	}
+	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) { shoot();					}
+}
+
+void Game::shoot() {
+	Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN;
 }

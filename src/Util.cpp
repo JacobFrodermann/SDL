@@ -1,11 +1,13 @@
 #include <SDL.h>
 #include <algorithm>
+#include <cstdlib>
 #include <vector>
 #include <algorithm>
 #include <vector>
 #include "Util.hpp"
 #include "SDL_error.h"
 #include "SDL_image.h"
+#include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
 #include <iostream>
@@ -37,4 +39,12 @@ SDL_Texture* util::loadTexuture(std::string name, SDL_Renderer *renderer) {
         exit(1);
     }
     return SDL_CreateTextureFromSurface(renderer, temp);
+}
+bool util::inCircle(SDL_Point center, int radius ,SDL_Point p ) {
+  int dx = std::abs(center.x - p.x);
+  if (dx > radius) return false;
+  int dy = std::abs(center.y - p.y);
+  if (dy > radius) return false;
+  if (dx+dy <= radius) return true;
+  return (dx*dx + dy*dy <= radius*radius);
 }

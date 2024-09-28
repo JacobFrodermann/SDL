@@ -5,13 +5,26 @@ CC=g++
 setup:
 	mkdir -p obj
 	mkdir -p bin
-compile: setup
-	for file in src/*.cpp ; do \
-		$(CC) $(CFLAGS) $$file -o obj/$$(echo $$file | cut -c 5- | rev | cut -c 4- | rev)o;\
-		echo $$file;\
-	done
+
+Asteroids.o:
+	$(CC) $(CFLAGS) -g src/Asteroids.cpp -o obj/Asteroids.o
+Beam.o:
+	$(CC) $(CFLAGS) -g src/Beam.cpp -o obj/Beam.o
+Game.o:
+	$(CC) $(CFLAGS) -g src/Game.cpp -o obj/Game.o
+InitError.o:
+	$(CC) $(CFLAGS) -g src/InitError.cpp -o obj/InitError.o
+main.o:
+	$(CC) $(CFLAGS) -g src/main.cpp -o obj/main.o
+Menu.o:
+	$(CC) $(CFLAGS) -g src/Menu.cpp -o obj/Menu.o
+State.o:
+	$(CC) $(CFLAGS) -g src/State.cpp -o obj/State.o
+Util.o:
+	$(CC) $(CFLAGS) -g src/Util.cpp -o obj/Util.o
+compile: setup Asteroids.o Beam.o Game.o InitError.o main.o Menu.o State.o Util.o
 link: compile
 	$(CC) $(LDFLAGS) obj/* -o bin/AsteroidShooter
 run: link
-	./bin/AsteroidShooter
+	bin/AsteroidShooter
 all: link

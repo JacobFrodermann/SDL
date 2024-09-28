@@ -16,5 +16,5 @@ class Game : public State {
 		int BeamCD, tick;
 		bool dead;
 		std::vector<int> pressed;
-		void doCollisions(), renderBeams(), renderAsteroids(), handleKeyPresses();
+		void doCollisions(), renderBeams(), renderAsteroids(), handleKeyPresses(), shoot();
 };
