@@ -11,4 +11,5 @@ class Beam {
         SDL_Rect getDstRect();
         void tick();
         static void filter();
+        SDL_Point* getPoints();
 };

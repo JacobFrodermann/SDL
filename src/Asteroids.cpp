@@ -1,4 +1,5 @@
 #include "Asteroid.hpp"
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <vector>
@@ -11,6 +12,7 @@ std::vector<Asteroid> Asteroid::asteroids = {}; //initalize the Vector
 Asteroid::Asteroid() {
     w = 107;
     h = 112;
+    radius = 50;
     rs = util::random_float(.1, 2);
     skin = std::rand() % 64;
     rot = util::random_float(5.5,7);
@@ -47,10 +49,12 @@ void Asteroid::tick() {
     Y += VelY;
     rot += rs;
 }
+void Asteroid::filter() {
+    for (Asteroid i : asteroids) {
+        
+    }
+}  
 
-/*
-for (int i=0; i<astAtlas.length; i++) {
-			for (int j = 0; j<astAtlas[i].length; j++) {
-				astAtlas[i][j] = atlas.getSubimage(i*102+20, j*102+30, 107, 112);
-			} 
-		}*/
+bool Asteroid::intersects(SDL_Point p) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
+    return std::pow((X - (X+w/2)),2) + std::pow((Y - (Y+w/2)),2) < std::pow(1,2); 
+}

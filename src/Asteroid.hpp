@@ -9,7 +9,8 @@ class Asteroid {
         void tick();
         float X,Y,VelX,VelY,rot,h,w,rs;
         static std::vector<Asteroid> asteroids;
-        static void spawn();
-    private:
-        int skin;
+        static void spawn(), filter();
+        bool intersects(SDL_Point);
+        void damage();
+        int skin, radius, health;
 };

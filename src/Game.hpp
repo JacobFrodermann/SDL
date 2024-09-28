@@ -1,4 +1,5 @@
 #pragma once
+#include "SDL_render.h"
 #include "State.hpp"
 #include <vector>
 
@@ -10,9 +11,10 @@ class Game : public State {
 	private:
 		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture;
 		SDL_Rect BgRect, ShipRect, ShipSrcRect;
-		float BackgroundOffset;
-		float VelX, VelY, animationState, rotation,X,Y;
-		int BeamCD;
+		SDL_Renderer *renderer;
+		float BackgroundOffset, VelX, VelY, animationState, rotation,X,Y;
+		int BeamCD, tick;
 		bool dead;
 		std::vector<int> pressed;
+		void doCollisions(), renderBeams(), renderAsteroids(), handleKeyPresses();
 };

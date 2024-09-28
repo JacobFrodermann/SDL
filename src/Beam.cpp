@@ -38,3 +38,14 @@ void Beam::filter(){
     });
     beams = temp;
 }
+
+SDL_Point* Beam::getPoints() {
+    SDL_Point ret[] = {{
+        .x = static_cast<int>(X - sin(rot) * 12.5),
+        .y = static_cast<int>(Y - cos(rot) * 25)
+    },{
+        .x = static_cast<int>(X + sin(rot) * 12.5),
+        .y = static_cast<int>(Y + cos(rot) *25)
+    }};
+    return ret;
+}

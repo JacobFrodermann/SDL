@@ -38,7 +38,10 @@ int Game::init(SDL_Renderer * renderer) {
 	return 0;
 }
 
-int Game::draw(SDL_Renderer * renderer) {
+int Game::draw(SDL_Renderer * render) {
+	this->renderer = render;
+	tick ++;
+	tick %= 20;
 	int ret = 0;
 	SDL_Event e;
 	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
@@ -52,13 +55,8 @@ int Game::draw(SDL_Renderer * renderer) {
 		}
 	}
 
-	if(util::isPressed(pressed, SDLK_UP)) {
-		VelY += ACCEL_MOD * cos(rotation);
-		VelX += ACCEL_MOD * sin(rotation);
-	}
-	if(util::isPressed(pressed, SDLK_LEFT)) {rotation += STEERING_MOD;}
-	if(util::isPressed(pressed,SDLK_RIGHT)) {rotation -= STEERING_MOD;}
-	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) {Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN; Beam::filter();}
+	handleKeyPresses();
+	
 	BeamCD--;
 	X += VelX/1.5;
 	Y += VelY/1.5;
@@ -76,24 +74,19 @@ int Game::draw(SDL_Renderer * renderer) {
 	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
 	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
 
+	if (tick == 1) {
+		Beam::filter();
+		Asteroid::filter();
+	}
 
 
-	//this->BgRect.y = (int) BackgroundOffset;
-
-	//SDL_RenderCopy(renderer, BgTexture, NULL, &BgRect);
 	Asteroid::spawn();
-	for (Asteroid &a : Asteroid::asteroids) {
-		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
-		//std::cout << "Asteroid at (" << a.X << "," << a.Y << ")" << std::endl; 
-		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
-		a.tick();
-	}
+	
+	renderAsteroids();
 
-	for (Beam &b : Beam::beams) {
-		SDL_Rect dst = b.getDstRect();
-		SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst, (b.rot-M_PI)*-180/M_PI, NULL, SDL_FLIP_NONE);
-		b.tick();
-	}
+	renderBeams();
+
+	doCollisions();
 
 	SDL_RenderCopyEx(renderer, ShipsTexture, &ShipSrcRect, &ShipRect,(rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
 
@@ -104,4 +97,44 @@ Game::~Game() {
 	SDL_DestroyTexture(this->BgTexture);
 	SDL_DestroyTexture(this->ShipsTexture);
 	SDL_DestroyTexture(this->BeamTexture);
+}
+
+void Game::doCollisions() {
+	for (Beam &b : Beam::beams) {
+		SDL_Point* points = b.getPoints();
+		for (Asteroid &a : Asteroid::asteroids) {
+			bool notHit = a.intersects(points[0]);
+			notHit = notHit && a.intersects(points[1]);
+			if (!notHit) {
+				b.X = 10000; // move out of bounds
+				a.damage();
+			}
+		}
+	}
+}
+
+void Game::renderBeams() {
+	for (Beam &b : Beam::beams) {
+		SDL_Rect dst = b.getDstRect();
+		SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst, (b.rot-M_PI)*-180/M_PI, NULL, SDL_FLIP_NONE);
+		b.tick();
+	}
+}
+
+void Game::renderAsteroids() {
+	for (Asteroid &a : Asteroid::asteroids) {
+		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
+		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
+		a.tick();
+	}
+}
+
+void Game::handleKeyPresses() {
+	if(util::isPressed(pressed, SDLK_UP)) {
+		VelY += ACCEL_MOD * cos(rotation);
+		VelX += ACCEL_MOD * sin(rotation);
+	}
+	if(util::isPressed(pressed, SDLK_LEFT)) {rotation += STEERING_MOD;}
+	if(util::isPressed(pressed,SDLK_RIGHT)) {rotation -= STEERING_MOD;}
+	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) {Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN;}
 }
