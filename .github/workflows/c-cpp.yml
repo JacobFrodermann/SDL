@@ -20,7 +20,7 @@ jobs:
         sudo apt-get install libsdl2-dev libsdl2-image-dev libjxl-dev libyuv-dev
     - name: CMake
       run: cmake 
-      working_dir: build
+      working_directory: build
     - name: Make
       run: make link -j
-      working_dir: build
+      working_directory: build
