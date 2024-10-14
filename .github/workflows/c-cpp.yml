@@ -18,6 +18,9 @@ jobs:
         sudo add-apt-repository -y "deb http://archive.ubuntu.com/ubuntu `lsb_release -sc` main universe restricted multiverse"
         sudo apt-get update -y -qq
         sudo apt-get install libsdl2-dev libsdl2-image-dev libjxl-dev libyuv-dev
-
-    - name: make
-      run: make link
+    - name: CMake
+      run: cmake 
+      working_dir: build
+    - name: Make
+      run: make link -j
+      working_dir: build
