@@ -5,16 +5,17 @@
 #include <iterator>
 #include <vector>
 #include "SDL_rect.h"
+#include "Ship.hpp"
 #include "Util.hpp"
 #include "Settings.hpp"
 
 std::vector<Asteroid> Asteroid::asteroids = {};
 
-Asteroid::Asteroid() {
+Asteroid::Asteroid(int score) {
     w = 107;
     h = 112;
-    radius = 50;
-    health = ASTEROIDHEALTH;
+    radius = rand() % 30 + 35 + score / 5;
+    health = round(radius / 50 + pow(radius,2) / 650); // f(x) = x/50 + x²/650
     rs = util::random_float(.1, 2);
     skin = std::rand() % 64;
     rot = util::random_float(5.5,7);
@@ -36,25 +37,28 @@ SDL_Rect Asteroid::getSrcRect() {
 }
 SDL_Rect Asteroid::getDstRect() {
     SDL_Rect ret = SDL_Rect();
-    ret.h = 112;
-    ret.w = 107;
+    ret.h = 2.24 * radius;
+    ret.w = 2.14 * radius;
     ret.x = X;
     ret.y = Y;
     return  ret;
 }
 
-void Asteroid::spawn(){
-    if (rand() % ASTEROIDSPAWNRATE == 0) asteroids.push_back(Asteroid());
+void Asteroid::spawn(int score){
+    if (rand() % ASTEROIDSPAWNRATE == 0) asteroids.push_back(Asteroid(score));
 }
 void Asteroid::tick() {
-    X += VelX;
-    Y += VelY;
-    rot += rs;
+    for (Asteroid &a : asteroids) {
+        a.X += a.VelX;
+        a.Y += a.VelY;
+        a.rot += a.rs;
+    }
 }
 void Asteroid::filter() {
     std::vector<Asteroid> temp = {};
     std::copy_if(asteroids.begin(), asteroids.end(), std::back_inserter(temp),[](Asteroid a) -> bool{
         if (a.health <= 0) {
+            if (a.skin == 0 || a.skin == 8 || a.skin == 16)Ship::player.powerUp();
             return false;
         };
         return a.X < 2000 && a.X > -200 && a.Y < 1200 && a.Y > -200;
@@ -62,11 +66,21 @@ void Asteroid::filter() {
     asteroids = temp;
 }  
 
-bool Asteroid::intersects(SDL_Point p) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
+bool Asteroid::intersects(SDL_Rect r) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
+    bool hit = false;
+    hit = hit || intersects(SDL_Point{r.x,r.y               });
+    hit = hit || intersects(SDL_Point{r.x,r.y + r.h         });
+    hit = hit || intersects(SDL_Point{r.x + r.w,r.y         });
+    hit = hit || intersects(SDL_Point{r.x + r.w,r.y + r.h   });
+
+    return hit;
+}
+
+bool Asteroid::intersects(SDL_Point p) {
     return util::inCircle(SDL_Point{
         static_cast<int>(X+w/2),
         static_cast<int>(Y+h/2)
-    }, radius, p); 
+    }, radius, p);
 }
 
 void Asteroid::damage() {

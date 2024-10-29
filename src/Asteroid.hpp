@@ -3,14 +3,14 @@
 #include <vector>
 class Asteroid {
     public:
-        Asteroid();
+        Asteroid(int);
         SDL_Rect getSrcRect();
         SDL_Rect getDstRect();
-        void tick();
+        static void tick();
         float X,Y,VelX,VelY,rot,h,w,rs;
         static std::vector<Asteroid> asteroids;
-        static void spawn(), filter();
-        bool intersects(SDL_Point);
+        static void spawn(int score), filter();
+        bool intersects(SDL_Rect), intersects(SDL_Point);
         void damage();
         int skin, radius, health;
 };

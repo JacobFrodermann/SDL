@@ -8,13 +8,14 @@ class Game : public State {
 		virtual ~Game();
 		virtual int draw(SDL_Renderer* renderer);
 		virtual int init(SDL_Renderer* renderer);
+		int score;
 	private:
-		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture;
-		SDL_Rect BgRect, ShipRect, ShipSrcRect;
+		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture;
+		SDL_Rect BgRect, ForceFieldSrcRect;
 		SDL_Renderer *renderer;
-		float BackgroundOffset, VelX, VelY, animationState, rotation,X,Y;
-		int BeamCD, tick;
+		float BackgroundOffset, animationState;
+		int tick;
 		bool dead;
 		std::vector<int> pressed;
-		void doCollisions(), renderBeams(), renderAsteroids(), handleKeyPresses(), shoot();
+		void doCollisions(), renderBeams(), renderAsteroids(), handleKeyPresses();
 };

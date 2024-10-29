@@ -1,5 +1,5 @@
 CFLAGS=-c -Wall -I/usr/include/SDL2 -D_REENTRANT -g 
-LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image
+LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image -static -static-libgcc -static-2
 CC=g++
 
 setup:
@@ -22,7 +22,9 @@ State.o:
 	$(CC) $(CFLAGS) -g src/State.cpp -o obj/State.o
 Util.o:
 	$(CC) $(CFLAGS) -g src/Util.cpp -o obj/Util.o
-compile: setup Asteroids.o Beam.o Game.o InitError.o main.o Menu.o State.o Util.o
+Ship.o:
+	$(CC) $(CFLAGS) -g src/Ship.cpp -o obj/Ship.o
+compile: setup Asteroids.o Beam.o Game.o InitError.o main.o Menu.o State.o Util.o Ship.o
 link: compile
 	$(CC) $(LDFLAGS) obj/* -o bin/AsteroidShooter
 run: link

@@ -10,6 +10,7 @@
 #include <vector>
 #include <vector>
 #include "Settings.hpp"
+#include "Ship.hpp"
 #include "Util.hpp"
 #include "Beam.hpp"
 #include "Asteroid.hpp"
@@ -19,22 +20,16 @@ int Game::init(SDL_Renderer * renderer) {
 	this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
 	this->BeamTexture = util::loadTexuture("assets/beam.png",renderer);
 	this->AsteroidsTexture = util::loadTexuture("assets/asteriodAtlas.png", renderer);
+	this->ForceFieldTexture = util::loadTexuture("assets/forcefield.png", renderer);
 
 
 	this->BgRect = {690,0,540,2160};
+	this->ForceFieldSrcRect = {0,0,50,70};
 
 	BackgroundOffset = 0;
-	VelX = 0;
-	VelY = 0;
-	ShipRect = {920,900,60,90};
-	X = ShipRect.x;
-	Y = ShipRect.y;
 	animationState = 0;
 	dead = false;
-	ShipSrcRect = {0,0,40,60};
 	pressed = {};
-	rotation = M_PI;
-	BeamCD=0;
 	return 0;
 }
 
@@ -56,47 +51,45 @@ int Game::draw(SDL_Renderer * render) {
 	}
 
 	handleKeyPresses();
-	
-	BeamCD--;
-	X += VelX/1.5;
-	Y += VelY/1.5;
-	VelX = VelX / FRICTION_MOD;
-	VelY = VelY / FRICTION_MOD;
 
+	if (!Ship::player.dead) {	
+		Ship::player.tick();
+		Asteroid::spawn(score);
+		doCollisions();
 
-	ShipRect.x = X;
-	ShipRect.y = Y;
+		if (tick == 1) {
+			Beam::filter();
+			Asteroid::filter();
+			score ++;
+		}
+
+		Asteroid::tick();
+
+	}
 	
 	BackgroundOffset -= .1f;
 	animationState += .05f;
+
 	if ((int) animationState == 4) animationState = 0; //reset animation before 5
 
-	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
-	ShipSrcRect.y = (int) animationState * 60; //move Rect to fitting image
-
-	if (tick == 1) {
-		Beam::filter();
-		Asteroid::filter();
-	}
-
-
-	Asteroid::spawn();
-	
 	renderAsteroids();
 
 	renderBeams();
 
-	doCollisions();
+	SDL_RenderCopyEx(renderer, ShipsTexture, Ship::player.getSrcRect(animationState), Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
+	if (Ship::player.isInvis()) {
+		SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect, Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
+	}
 
-	SDL_RenderCopyEx(renderer, ShipsTexture, &ShipSrcRect, &ShipRect,(rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
 
 	return ret;
 }
 
 Game::~Game() {
-	SDL_DestroyTexture(this->BgTexture);
-	SDL_DestroyTexture(this->ShipsTexture);
-	SDL_DestroyTexture(this->BeamTexture);
+	SDL_DestroyTexture(this->BgTexture			);
+	SDL_DestroyTexture(this->ShipsTexture		);
+	SDL_DestroyTexture(this->BeamTexture		);
+	SDL_DestroyTexture(this->AsteroidsTexture	);
 }
 
 void Game::doCollisions() {
@@ -105,10 +98,21 @@ void Game::doCollisions() {
 			bool hit = a.intersects(b.points[0]);
 			hit = hit || a.intersects(b.points[1]);
 			if (hit) {
-				b.X = 10000; // move out of bounds
+				b.removeMe = true;
+				b.X = 1000000; // move out of bounds
 				a.damage();
 			}
 		}
+	}
+	bool hit = false;
+	for (Asteroid &a : Asteroid::asteroids) {
+		if (a.intersects(Ship::player.getColRect())) {
+			hit = true;
+			break;
+		}
+	}
+	if (hit) {
+		Ship::player.damage(1);
 	}
 }
 
@@ -123,21 +127,16 @@ void Game::renderBeams() {
 void Game::renderAsteroids() {
 	for (Asteroid &a : Asteroid::asteroids) {
 		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
+		SDL_RenderDrawRect(renderer,&dst);
 		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
-		a.tick();
 	}
 }
 
 void Game::handleKeyPresses() {
 	if(util::isPressed(pressed, SDLK_UP)) {
-		VelY += ACCEL_MOD * cos(rotation);
-		VelX += ACCEL_MOD * sin(rotation);
+		Ship::player.accel(ACCEL_MOD);
 	}
-	if(util::isPressed(pressed, SDLK_LEFT)) 				{ rotation += STEERING_MOD;	}
-	if(util::isPressed(pressed, SDLK_RIGHT)) 				{ rotation -= STEERING_MOD;	}
-	if(util::isPressed(pressed, SDLK_SPACE) && BeamCD < 0) { shoot();					}
-}
-
-void Game::shoot() {
-	Beam::shoot(ShipRect.x+20,ShipRect.y+25,rotation); BeamCD = BEAMCOOLDOWN;
+	if(util::isPressed(pressed, SDLK_LEFT))  { Ship::player.rot(STEERING_MOD);	}
+	if(util::isPressed(pressed, SDLK_RIGHT)) { Ship::player.rot(-STEERING_MOD);}
+	if(util::isPressed(pressed, SDLK_SPACE)) { Ship::player.shoot();			}
 }
