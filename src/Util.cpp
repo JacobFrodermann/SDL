@@ -1,6 +1,8 @@
 #include <SDL.h>
 #include <algorithm>
 #include <cstdlib>
+#include <initializer_list>
+#include <spdlog/spdlog.h>
 #include <vector>
 #include <algorithm>
 #include <vector>
@@ -10,7 +12,6 @@
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_surface.h"
-#include <iostream>
 
 SDL_Rect util::rect(int x, int y, int w, int h) {
     SDL_Rect r;
@@ -27,6 +28,14 @@ bool util::contains(SDL_Rect rect, SDL_Point point) {
 bool util::isPressed(std::vector<int> pressed, SDL_KeyCode key) {
 	return std::find(pressed.begin(), pressed.end(), key) != pressed.end();
 }
+
+bool util::isPressed(std::vector<int> pressed, std::initializer_list<SDL_KeyCode> key) {
+    for (SDL_KeyCode k : key) {
+        if (std::find(pressed.begin(), pressed.end(), k) != pressed.end()) return true;
+    }
+    return false;
+}
+
 float util::random_float(float min, float max) {
 	return ((float)rand() / RAND_MAX) * (max - min) + min;
 }
@@ -34,8 +43,8 @@ float util::random_float(float min, float max) {
 SDL_Texture* util::loadTexuture(std::string name, SDL_Renderer *renderer) {
     SDL_Surface *temp = IMG_Load(name.c_str());
     if (temp == NULL) {
-        std::cout<<SDL_GetError()<<std::endl;
-        std::cout<<"failed to load texture"<<std::endl;
+        spdlog::error(SDL_GetError());
+        spdlog::error("failed to load texture " + name);
         exit(1);
     }
     return SDL_CreateTextureFromSurface(renderer, temp);

@@ -5,7 +5,6 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include <algorithm>
-#include <cmath>
 #include <cstddef>
 #include <vector>
 #include <vector>
@@ -15,7 +14,8 @@
 #include "Beam.hpp"
 #include "Asteroid.hpp"
 
-int Game::init(SDL_Renderer * renderer) {
+int Game::init(SDL_Renderer * renderer, bool debug) {
+	this->debug = debug;
 	this->BgTexture = util::loadTexuture("assets/GameBG.png", renderer);
 	this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
 	this->BeamTexture = util::loadTexuture("assets/beam.png",renderer);
@@ -99,7 +99,7 @@ void Game::doCollisions() {
 			hit = hit || a.intersects(b.points[1]);
 			if (hit) {
 				b.removeMe = true;
-				b.X = 1000000; // move out of bounds
+				b.X = 1000000; // move out of bounds deleted by asteroid::filter
 				a.damage();
 			}
 		}
@@ -127,16 +127,16 @@ void Game::renderBeams() {
 void Game::renderAsteroids() {
 	for (Asteroid &a : Asteroid::asteroids) {
 		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
-		SDL_RenderDrawRect(renderer,&dst);
+		if (debug) SDL_RenderDrawRect(renderer,&dst);
 		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
 	}
 }
 
 void Game::handleKeyPresses() {
-	if(util::isPressed(pressed, SDLK_UP)) {
+	if(util::isPressed(pressed, {SDLK_UP, SDLK_w})) {
 		Ship::player.accel(ACCEL_MOD);
 	}
-	if(util::isPressed(pressed, SDLK_LEFT))  { Ship::player.rot(STEERING_MOD);	}
-	if(util::isPressed(pressed, SDLK_RIGHT)) { Ship::player.rot(-STEERING_MOD);}
-	if(util::isPressed(pressed, SDLK_SPACE)) { Ship::player.shoot();			}
+	if(util::isPressed(pressed, {SDLK_LEFT, SDLK_a}))  Ship::player.rot(STEERING_MOD);	
+	if(util::isPressed(pressed, {SDLK_RIGHT, SDLK_d})) Ship::player.rot(-STEERING_MOD);
+	if(util::isPressed(pressed, SDLK_SPACE)) Ship::player.shoot();
 }

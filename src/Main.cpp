@@ -1,3 +1,4 @@
+#include <cstring>
 #include <iostream>
 #include <SDL.h>
 #include "InitError.hpp"
@@ -6,7 +7,10 @@
 #include <memory>
 #include "Game.hpp"
 #include <chrono>
+#include <ostream>
+#include <spdlog/common.h>
 #include "Settings.hpp"
+#include "spdlog/spdlog.h"
 
 class SDL {
 	SDL_Window* m_window;
@@ -15,6 +19,7 @@ public:
 	SDL(Uint32 flags = 0);
 	virtual ~SDL();
 	void draw();
+	bool debug = false;
 };
 
 SDL::SDL(Uint32 flags) {
@@ -46,10 +51,10 @@ void SDL::draw() {
 	int stateCode = MENU_STATE;
 
 	std::shared_ptr<State> state = std::make_shared<Menu>();
-	state->init(m_renderer);
+	state->init(m_renderer, debug);
 
 	std::shared_ptr<State> game = std::make_shared<Game>();
-	game->init(m_renderer);
+	game->init(m_renderer, debug);
 
 	std::shared_ptr<State> menu;
 
@@ -69,7 +74,7 @@ void SDL::draw() {
             SDL_Quit();
 			break;
 		case GAME_STATE:
-			std::cout << "Game" << std::endl;
+			spdlog::info("Started Game");
 			if (stateCode == MENU_STATE) {
 				state.swap(game);
 				game.swap(menu);
@@ -89,8 +94,23 @@ void SDL::draw() {
 }
 
 int main(int argc, char* argv[]) {
+	spdlog::info("Starting AsteroidShooter");
+	
+	bool debug = false;
+	for (int i = 0; i < argc; i++) {
+		std::cout << argv[i] << " ";
+		if (strcmp(argv[i], "--debug") == 0) {
+			spdlog::info("Debug Mode");
+			spdlog::set_level(spdlog::level::trace);
+			debug = true;
+		}
+	}
+	std::cout << std::endl;
+
+
 	try {
 		SDL sdl(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+		sdl.debug = debug;
 		sdl.draw();
 
 		return 0;
