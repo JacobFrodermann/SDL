@@ -80,7 +80,7 @@ int Game::draw(SDL_Renderer * render) {
 	if (Ship::player.isInvis()) {
 		SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect, Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
 	}
-
+	
 
 	return ret;
 }

@@ -1,5 +1,5 @@
 CFLAGS=-c -Wall -I/usr/include/SDL2 -D_REENTRANT -g 
-LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image -static -static-libgcc -static-2
+LDFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image
 CC=g++
 
 setup:
