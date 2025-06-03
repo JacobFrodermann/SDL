@@ -1,9 +1,9 @@
 #include "Menu.hpp"
 #include <SDL_image.h>
-#include <iostream>
+#include <spdlog/spdlog.h>
 #include "Util.hpp"
 
-int Menu::init(SDL_Renderer * renderer) {
+int Menu::init(SDL_Renderer * renderer, bool) {
     SDL_Surface * bg = IMG_Load("assets/actionfieldBg1.png");
     this->BgTexture = SDL_CreateTextureFromSurface(renderer, bg);
     SDL_FreeSurface(bg);
@@ -27,8 +27,8 @@ int Menu::draw(SDL_Renderer * renderer) {
             ret = SDL_QUIT;
         }
         if (e.type == SDL_MOUSEBUTTONDOWN) {
-            std::cout << "click " << std::endl;
             SDL_GetMouseState(&mouseX, &mouseY);
+            //spdlog::debug("click at [" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + "]");
             SDL_Point p = {mouseX, mouseY};
             if (util::contains(this->StartRect,p)) {
                 ret = GAME_STATE;

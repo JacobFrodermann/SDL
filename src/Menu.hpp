@@ -5,7 +5,7 @@ class Menu : public State {
     public:
         virtual ~Menu();
         virtual int draw(SDL_Renderer* renderer);
-        virtual int init(SDL_Renderer* renderer);
+        virtual int init(SDL_Renderer* renderer, bool debug);
     private:
         SDL_Texture* BgTexture;
         SDL_Texture* StartTexture;

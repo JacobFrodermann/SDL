@@ -11,6 +11,7 @@ class Asteroid {
         static std::vector<Asteroid> asteroids;
         static void spawn(int score), filter();
         bool intersects(SDL_Rect), intersects(SDL_Point);
+        bool checkBounds();
         void damage();
         int skin, radius, health;
 };

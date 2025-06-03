@@ -7,7 +7,7 @@ class Game : public State {
 	public:
 		virtual ~Game();
 		virtual int draw(SDL_Renderer* renderer);
-		virtual int init(SDL_Renderer* renderer);
+		virtual int init(SDL_Renderer* renderer, bool debug);
 		int score;
 	private:
 		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture;
