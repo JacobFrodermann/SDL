@@ -32,7 +32,6 @@ Beam::Beam(float X, float Y, float rotation) {
 }
 
 void Beam::shoot(float X, float Y, float rotation, int power){
-    std::cout << power << std::endl;
     if (power > 5) power = 5;
     int offset = 0;
     for (int i = 0; i<power;i++) {

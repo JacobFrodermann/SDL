@@ -76,6 +76,8 @@ int Game::draw(SDL_Renderer * render) {
 
 	renderBeams();
 
+	renderLives();
+
 	SDL_RenderCopyEx(renderer, ShipsTexture, Ship::player.getSrcRect(animationState), Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
 	if (Ship::player.isInvis()) {
 		SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect, Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
@@ -139,4 +141,11 @@ void Game::handleKeyPresses() {
 	if(util::isPressed(pressed, {SDLK_LEFT, SDLK_a}))  Ship::player.rot(STEERING_MOD);	
 	if(util::isPressed(pressed, {SDLK_RIGHT, SDLK_d})) Ship::player.rot(-STEERING_MOD);
 	if(util::isPressed(pressed, SDLK_SPACE)) Ship::player.shoot();
+}
+
+void Game::renderLives() {
+	for (int i = 0; i < Ship::player.getHealth();i++) {
+		SDL_Rect dst = SDL_Rect{890 + 50*i, 20, 40, 60};
+		SDL_RenderCopy(renderer, ShipsTexture, Ship::player.getSrcRect(animationState), &dst);
+	}	
 }

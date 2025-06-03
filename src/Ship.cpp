@@ -8,7 +8,7 @@
 Ship Ship::player = Ship();
 
 Ship::Ship() {
-	X = 920;
+	X = 930;
 	Y = 900;
 	W = 60;
 	H = 90;
@@ -77,4 +77,8 @@ bool Ship::isInvis() {
 }
 void Ship::powerUp() {
 	power ++;
+}
+
+int Ship::getHealth() {
+	return this->health;
 }

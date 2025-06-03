@@ -12,6 +12,6 @@ class Ship {
         SDL_Rect getColRect();
         void shoot(), tick(), accel(double), rot(double), damage(int), powerUp();
         double VelX, VelY, VelRot,  X, Y, rotation;
-        int BeamCD, W, H, power;
+        int BeamCD, W, H, power, getHealth();
         bool dead, isInvis();
 };

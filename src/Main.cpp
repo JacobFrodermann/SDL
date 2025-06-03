@@ -9,6 +9,7 @@
 #include <chrono>
 #include <ostream>
 #include <spdlog/common.h>
+#include <string>
 #include "Settings.hpp"
 #include "spdlog/spdlog.h"
 
@@ -116,9 +117,8 @@ int main(int argc, char* argv[]) {
 		return 0;
 	}
 	catch (const InitError& err) {
-		std::cerr << "Error while initializing SDL:  "
-			<< err.what()
-			<< std::endl;
+		spdlog::error("Error while initializing SDL: " + std::string(err.what()));
 	}
+	
 	return 1;
 }
