@@ -1,13 +1,10 @@
 #include "Beam.hpp"
 #include "SDL_rect.h"
-#include "Settings.hpp"
+#include "../Settings.hpp"
 #include <algorithm>
 #include <cmath>
-#include <cstddef>
 #include <cstdlib>
-#include <iostream>
 #include <iterator>
-#include <numeric>
 #include <vector>
 
 std::vector<Beam> Beam::beams = {};

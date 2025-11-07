@@ -14,8 +14,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": false,
-      "cwd": "/home/jef/git/SDL/src",
-      "program": "/home/jef/git/SDL/src/build/Debug/outDebug",
+      "cwd": "/home/jef/git/SDL",
+      "program": "/home/jef/git/SDL/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
@@ -24,7 +24,8 @@
           "text": "-enable-pretty-printing",
           "ignoreFailures": true
         }
-      ]
+      ],
+      "preLaunchTask": "C++: g++ build Project",
     }
   ]
 }

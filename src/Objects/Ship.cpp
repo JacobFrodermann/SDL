@@ -1,6 +1,6 @@
 #include "Ship.hpp"
 #include "SDL_rect.h"
-#include "Settings.hpp"
+#include "../Settings.hpp"
 #include "Beam.hpp"
 #include <cmath>
 #include <cstdio>

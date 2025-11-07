@@ -1,7 +1,8 @@
+#include <cstdio>
 #include <cstring>
 #include <iostream>
 #include <SDL.h>
-#include "InitError.hpp"
+#include "Utils/InitError.hpp"
 #include <SDL_image.h>
 #include "Menu.hpp"
 #include <memory>
@@ -89,8 +90,11 @@ void SDL::draw() {
 		SDL_RenderPresent(m_renderer);
 
 		auto now = std::chrono::system_clock::now();		
-		int passed = 1000/FRAMERATE - std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
-		SDL_Delay((passed < 0) ? 0 : passed);
+		int passed = std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
+		spdlog::info("render took " + std::to_string(passed) + "ms");
+		
+		int wait = 1000/FRAMERATE - passed; 
+		SDL_Delay((wait < 0) ? 0 : wait);
 	}
 }
 
@@ -119,6 +123,6 @@ int main(int argc, char* argv[]) {
 	catch (const InitError& err) {
 		spdlog::error("Error while initializing SDL: " + std::string(err.what()));
 	}
-	
+
 	return 1;
 }

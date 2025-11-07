@@ -9,10 +9,10 @@
 #include <vector>
 #include <vector>
 #include "Settings.hpp"
-#include "Ship.hpp"
-#include "Util.hpp"
-#include "Beam.hpp"
-#include "Asteroid.hpp"
+#include "Objects/Ship.hpp"
+#include "Utils/Util.hpp"
+#include "Objects/Beam.hpp"
+#include "Objects/Asteroid.hpp"
 
 int Game::init(SDL_Renderer * renderer, bool debug) {
 	this->debug = debug;

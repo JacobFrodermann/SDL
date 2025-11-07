@@ -8,8 +8,8 @@
 #include <vector>
 #include "SDL_rect.h"
 #include "Ship.hpp"
-#include "Util.hpp"
-#include "Settings.hpp"
+#include "../Utils/Util.hpp"
+#include "../Settings.hpp"
 
 std::vector<Asteroid> Asteroid::asteroids = {};
 
