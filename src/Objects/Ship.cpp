@@ -3,39 +3,42 @@
 #include "../Settings.hpp"
 #include "Beam.hpp"
 #include <cmath>
-#include <cstdio>
 
-Ship Ship::player = Ship();
 
-Ship::Ship() {
-	X = 930;
-	Y = 900;
-	W = 60;
-	H = 90;
-	health = 3;
-	BeamCD = 0;
-	rotation = M_PI;
-	srcRect = SDL_Rect{0,0,40,60};
-	power = 1;
-}
+namespace AsteroidShooter {
 
-SDL_Rect* Ship::getDstRect() {
-	dstRect = SDL_Rect{static_cast<int>(X), static_cast<int>(Y) , W ,H};;
-	return &dstRect;
-}
-
-SDL_Rect* Ship::getSrcRect(int i) {
-	srcRect.y = 60 * i;
-	return &srcRect;
-}
-
-SDL_Rect Ship::getColRect() {
-	return  SDL_Rect{
-		static_cast<int>( X + 5  ),
+	
+	Ship Ship::player = Ship();
+	
+	Ship::Ship() {
+		X = 930;
+		Y = 900;
+		W = 60;
+		H = 90;
+		health = 3;
+		BeamCD = 0;
+		rotation = M_PI;
+		srcRect = SDL_Rect{0,0,40,60};
+		power = 1;
+	}
+	
+	SDL_Rect* Ship::getDstRect() {
+		dstRect = SDL_Rect{static_cast<int>(X), static_cast<int>(Y) , W ,H};;
+		return &dstRect;
+	}
+	
+	SDL_Rect* Ship::getSrcRect(int i) {
+		srcRect.y = 60 * i;
+		return &srcRect;
+	}
+	
+	SDL_Rect Ship::getColRect() {
+		return  SDL_Rect{
+			static_cast<int>( X + 5  ),
 		static_cast<int>( Y + 15 ),
 		static_cast<int>( W - 5  ),
 		static_cast<int>( H - 25 ),
-		};
+	};
 }
 
 void Ship::shoot() {
@@ -81,4 +84,5 @@ void Ship::powerUp() {
 
 int Ship::getHealth() {
 	return this->health;
+}
 }

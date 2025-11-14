@@ -2,6 +2,7 @@
 #include <cstring>
 #include <iostream>
 #include <SDL.h>
+#include "Objects/Asteroid.hpp"
 #include "Utils/InitError.hpp"
 #include <SDL_image.h>
 #include "Menu.hpp"
@@ -13,6 +14,8 @@
 #include <string>
 #include "Settings.hpp"
 #include "spdlog/spdlog.h"
+
+namespace AsteroidShooter {
 
 class SDL {
 	SDL_Window* m_window;
@@ -91,11 +94,12 @@ void SDL::draw() {
 
 		auto now = std::chrono::system_clock::now();		
 		int passed = std::chrono::duration_cast<std::chrono::milliseconds>(now - then).count();
-		spdlog::info("render took " + std::to_string(passed) + "ms");
+		//spdlog::info("render took " + std::to_string(passed) + "ms");
 		
 		int wait = 1000/FRAMERATE - passed; 
 		SDL_Delay((wait < 0) ? 0 : wait);
 	}
+}
 }
 
 int main(int argc, char* argv[]) {
@@ -114,7 +118,7 @@ int main(int argc, char* argv[]) {
 
 
 	try {
-		SDL sdl(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+		AsteroidShooter::SDL sdl(SDL_INIT_VIDEO | SDL_INIT_TIMER);
 		sdl.debug = debug;
 		sdl.draw();
 

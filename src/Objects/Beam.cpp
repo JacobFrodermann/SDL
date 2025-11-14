@@ -7,32 +7,35 @@
 #include <iterator>
 #include <vector>
 
-std::vector<Beam> Beam::beams = {};
-Beam templates[15]=  {  Beam(0), 
-                        Beam(0), Beam(0),
-                        Beam(.1), Beam(0), Beam(-.1),
-                        Beam(.2), Beam(.1), Beam(-.1), Beam(-.2),
-                        Beam(.2), Beam(.1), Beam(0), Beam(.1), Beam(.2)
-                    };
+namespace AsteroidShooter {
     
-
-Beam::Beam(float X, float Y, float rotation) {
-    this->X = X;
-    this->Y=Y;
-    this->VelX=BEAMSPEED * sin(rotation);
-    this->VelY=BEAMSPEED * cos(rotation);
-    this->rot = rotation;
-    this->points = (SDL_Point*) malloc(sizeof(SDL_Point)*2);
-    this->w = 25;
-    this->h = 50;
-    this->removeMe = false;
-}
-
-void Beam::shoot(float X, float Y, float rotation, int power){
-    if (power > 5) power = 5;
-    int offset = 0;
-    for (int i = 0; i<power;i++) {
-        offset += i;
+    
+    std::vector<Beam> Beam::beams = {};
+    Beam templates[15]=  {  Beam(0), 
+        Beam(0), Beam(0),
+        Beam(.1), Beam(0), Beam(-.1),
+        Beam(.2), Beam(.1), Beam(-.1), Beam(-.2),
+        Beam(.2), Beam(.1), Beam(0), Beam(.1), Beam(.2)
+    };
+    
+    
+    Beam::Beam(float X, float Y, float rotation) {
+        this->X = X;
+        this->Y=Y;
+        this->VelX=BEAMSPEED * sin(rotation);
+        this->VelY=BEAMSPEED * cos(rotation);
+        this->rot = rotation;
+        this->points = (SDL_Point*) malloc(sizeof(SDL_Point)*2);
+        this->w = 25;
+        this->h = 50;
+        this->removeMe = false;
+    }
+    
+    void Beam::shoot(float X, float Y, float rotation, int power){
+        if (power > 5) power = 5;
+        int offset = 0;
+        for (int i = 0; i<power;i++) {
+            offset += i;
     }
     for (int i = offset; i < offset + power; i++) {
         Beam::beams.push_back(*new Beam(X, Y, templates[i].rot + rotation));
@@ -67,3 +70,4 @@ void Beam::filter(){
     beams = temp;
 }
 
+}

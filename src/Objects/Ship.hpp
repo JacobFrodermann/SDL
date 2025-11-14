@@ -1,5 +1,8 @@
 #pragma  once
 #include "SDL_rect.h"
+
+namespace AsteroidShooter{
+
 class Ship {
     private:
         SDL_Rect  srcRect, dstRect;
@@ -15,3 +18,4 @@ class Ship {
         int BeamCD, W, H, power, getHealth();
         bool dead, isInvis();
 };
+}

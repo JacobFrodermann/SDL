@@ -11,23 +11,27 @@
 #include "../Utils/Util.hpp"
 #include "../Settings.hpp"
 
-std::vector<Asteroid> Asteroid::asteroids = {};
+namespace AsteroidShooter {
 
-Asteroid::Asteroid(int score) {
-    w = 107;
-    h = 112;
-    radius = rand() % 30 + 35 + score / 5;
-    health = round( (int)(radius / 50) + pow(radius,2) / 650); // f(x) = x/50 + x²/650
-    rs = util::random_float(.1, 2);
-    skin = std::rand() % 64;
-    rot = util::random_float(5.5,7);
-    X = rand()%960-80;
-    Y = -120;
-    if (rot < 6.25) X += 1100;
-    VelX = sin(rot) * ASTEROIDSPEED;
-    VelY = cos(rot) * ASTEROIDSPEED;
-    spdlog::trace("Spawned Asteroid with Skin " + std::to_string(skin) + " Radius " + std::to_string(radius) + " Health " + std::to_string(health));
-    Asteroid::asteroids.push_back(*this);
+    
+    std::vector<Asteroid> Asteroid::asteroids = {};
+    
+    Asteroid::Asteroid(int score) {
+        w = 107;
+        h = 112;
+        radius = rand() % 30 + 35 + score / 5;
+        health = round( (int)(radius / 50) + pow(radius,2) / 650); // f(x) = x/50 + x²/650
+        rs = util::random_float(.1, 2);
+
+        skin = std::rand() % 64;
+        rot = util::random_float(5.5,7);
+        X = rand()%960-80;
+        Y = -120;
+        if (rot < 6.25) X += 1100;
+        VelX = sin(rot) * ASTEROIDSPEED;
+        VelY = cos(rot) * ASTEROIDSPEED;
+        spdlog::trace("Spawned Asteroid with Skin " + std::to_string(skin) + " Radius " + std::to_string(radius) + " Health " + std::to_string(health));
+        Asteroid::asteroids.push_back(*this);
 }
 
 SDL_Rect Asteroid::getSrcRect() {
@@ -74,7 +78,7 @@ bool Asteroid::intersects(SDL_Rect r) { // src: https://stackoverflow.com/questi
     hit = hit || intersects(SDL_Point{r.x,r.y + r.h         });
     hit = hit || intersects(SDL_Point{r.x + r.w,r.y         });
     hit = hit || intersects(SDL_Point{r.x + r.w,r.y + r.h   });
-
+    
     return hit;
 }
 
@@ -92,4 +96,6 @@ void Asteroid::damage() {
 
 bool Asteroid::checkBounds() {
     return X < 2000 && X > -200 && Y < 1200 && Y > -200;
+}
+
 }

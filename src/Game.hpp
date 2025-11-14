@@ -3,6 +3,7 @@
 #include "State.hpp"
 #include <vector>
 
+namespace AsteroidShooter {
 class Game : public State {  
 	public:
 		virtual ~Game();
@@ -19,3 +20,4 @@ class Game : public State {
 		std::vector<int> pressed;
 		void doCollisions(), renderBeams(), renderAsteroids(), renderLives(), handleKeyPresses();
 };
+}

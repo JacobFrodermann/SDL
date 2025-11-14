@@ -1,151 +1,169 @@
 #include "Game.hpp"
+#include "Objects/Asteroid.hpp"
+#include "Objects/Beam.hpp"
+#include "Objects/Ship.hpp"
 #include "SDL_keycode.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
+#include "Settings.hpp"
+#include "Utils/Util.hpp"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <algorithm>
 #include <cstddef>
 #include <vector>
-#include <vector>
-#include "Settings.hpp"
-#include "Objects/Ship.hpp"
-#include "Utils/Util.hpp"
-#include "Objects/Beam.hpp"
-#include "Objects/Asteroid.hpp"
 
-int Game::init(SDL_Renderer * renderer, bool debug) {
-	this->debug = debug;
-	this->BgTexture = util::loadTexuture("assets/GameBG.png", renderer);
-	this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
-	this->BeamTexture = util::loadTexuture("assets/beam.png",renderer);
-	this->AsteroidsTexture = util::loadTexuture("assets/asteriodAtlas.png", renderer);
-	this->ForceFieldTexture = util::loadTexuture("assets/forcefield.png", renderer);
+namespace AsteroidShooter {
 
+int Game::init(SDL_Renderer *renderer, bool debug) {
+  this->debug = debug;
+  this->BgTexture = util::loadTexuture("assets/GameBG.png", renderer);
+  this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
+  this->BeamTexture = util::loadTexuture("assets/beam.png", renderer);
+  this->AsteroidsTexture =
+      util::loadTexuture("assets/asteriodAtlas.png", renderer);
+  this->ForceFieldTexture =
+      util::loadTexuture("assets/forcefield.png", renderer);
 
-	this->BgRect = {690,0,540,2160};
-	this->ForceFieldSrcRect = {0,0,50,70};
+  this->BgRect = {690, 0, 540, 2160};
+  this->ForceFieldSrcRect = {0, 0, 50, 70};
 
-	BackgroundOffset = 0;
-	animationState = 0;
-	dead = false;
-	pressed = {};
-	return 0;
+  BackgroundOffset = 0;
+  animationState = 0;
+  dead = false;
+  pressed = {};
+  return 0;
 }
 
-int Game::draw(SDL_Renderer * render) {
-	this->renderer = render;
-	tick ++;
-	tick %= 20;
-	int ret = 0;
-	SDL_Event e;
-	SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-	while (SDL_PollEvent(&e) != 0){
-		if (e.type == SDL_QUIT) {
-			ret = SDL_QUIT;
-		} else if (e.type == SDL_KEYDOWN) {
-			pressed.push_back(e.key.keysym.sym);
-		} else if (e.type == SDL_KEYUP) {
-			pressed.erase(std::remove(pressed.begin(), pressed.end(), e.key.keysym.sym), pressed.end());
-		}
-	}
+int Game::draw(SDL_Renderer *render) {
+  this->renderer = render;
+  tick++;
+  tick %= 20;
+  int ret = 0;
+  SDL_Event e;
+  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-	handleKeyPresses();
+  while (SDL_PollEvent(&e) != 0) {
+    if (e.type == SDL_QUIT) {
+      ret = SDL_QUIT;
+    } else if (e.type == SDL_KEYDOWN) {
+      pressed.push_back(e.key.keysym.sym);
+    } else if (e.type == SDL_KEYUP) {
+      pressed.erase(
+          std::remove(pressed.begin(), pressed.end(), e.key.keysym.sym),
+          pressed.end());
+    }
+  }
 
-	if (!Ship::player.dead) {	
-		Ship::player.tick();
-		Asteroid::spawn(score);
-		doCollisions();
+  handleKeyPresses();
 
-		if (tick == 1) {
-			Beam::filter();
-			Asteroid::filter();
-			score ++;
-		}
+  if (!Ship::player.dead) {
+    Ship::player.tick();
+    Asteroid::spawn(score);
+    doCollisions();
 
-		Asteroid::tick();
+    if (tick == 1) {
+      Beam::filter();
+      Asteroid::filter();
+      score++;
+    }
 
-	}
-	
-	BackgroundOffset -= .1f;
-	animationState += .05f;
+    Asteroid::tick();
+  }
 
-	if ((int) animationState == 4) animationState = 0; //reset animation before 5
+  BackgroundOffset -= .1f;
+  animationState += .05f;
 
-	renderAsteroids();
+  if ((int)animationState == 4)
+    animationState = 0; // reset animation before 5
 
-	renderBeams();
+  renderAsteroids();
 
-	renderLives();
+  renderBeams();
 
-	SDL_RenderCopyEx(renderer, ShipsTexture, Ship::player.getSrcRect(animationState), Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
-	if (Ship::player.isInvis()) {
-		SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect, Ship::player.getDstRect(),(Ship::player.rotation-M_PI)*-180/M_PI,NULL,SDL_FLIP_NONE);
-	}
-	
+  renderLives();
 
-	return ret;
+  SDL_RenderCopyEx(
+      renderer, ShipsTexture, Ship::player.getSrcRect(animationState),
+      Ship::player.getDstRect(), (Ship::player.rotation - M_PI) * -180 / M_PI,
+      NULL, SDL_FLIP_NONE);
+  if (Ship::player.isInvis()) {
+    SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect,
+                     Ship::player.getDstRect(),
+                     (Ship::player.rotation - M_PI) * -180 / M_PI, NULL,
+                     SDL_FLIP_NONE);
+  }
+
+  return ret;
 }
 
 Game::~Game() {
-	SDL_DestroyTexture(this->BgTexture			);
-	SDL_DestroyTexture(this->ShipsTexture		);
-	SDL_DestroyTexture(this->BeamTexture		);
-	SDL_DestroyTexture(this->AsteroidsTexture	);
+  SDL_DestroyTexture(this->BgTexture);
+  SDL_DestroyTexture(this->ShipsTexture);
+  SDL_DestroyTexture(this->BeamTexture);
+  SDL_DestroyTexture(this->AsteroidsTexture);
 }
 
 void Game::doCollisions() {
-	for (Beam &b : Beam::beams) {
-		for (Asteroid &a : Asteroid::asteroids) {
-			bool hit = a.intersects(b.points[0]);
-			hit = hit || a.intersects(b.points[1]);
-			if (hit) {
-				b.removeMe = true;
-				b.X = 1000000; // move out of bounds deleted by asteroid::filter
-				a.damage();
-			}
-		}
-	}
-	bool hit = false;
-	for (Asteroid &a : Asteroid::asteroids) {
-		if (a.intersects(Ship::player.getColRect())) {
-			hit = true;
-			break;
-		}
-	}
-	if (hit) {
-		Ship::player.damage(1);
-	}
+  for (Beam &b : Beam::beams) {
+    for (Asteroid &a : Asteroid::asteroids) {
+      bool hit = a.intersects(b.points[0]);
+      hit = hit || a.intersects(b.points[1]);
+      if (hit) {
+        b.removeMe = true;
+        b.X = 1000000; // move out of bounds deleted by asteroid::filter
+        a.damage();
+      }
+    }
+  }
+  bool hit = false;
+  for (Asteroid &a : Asteroid::asteroids) {
+    if (a.intersects(Ship::player.getColRect())) {
+      hit = true;
+      break;
+    }
+  }
+  if (hit) {
+    Ship::player.damage(1);
+  }
 }
 
 void Game::renderBeams() {
-	for (Beam &b : Beam::beams) {
-		SDL_Rect dst = b.getDstRect();
-		SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst, (b.rot-M_PI)*-180/M_PI, NULL, SDL_FLIP_NONE);
-		b.tick();
-	}
+  for (Beam &b : Beam::beams) {
+    SDL_Rect dst = b.getDstRect();
+    SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst,
+                     (b.rot - M_PI) * -180 / M_PI, NULL, SDL_FLIP_NONE);
+    b.tick();
+  }
 }
 
 void Game::renderAsteroids() {
-	for (Asteroid &a : Asteroid::asteroids) {
-		SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
-		if (debug) SDL_RenderDrawRect(renderer,&dst);
-		SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL, SDL_FLIP_NONE);
-	}
+  for (Asteroid &a : Asteroid::asteroids) {
+    SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
+    if (debug)
+      SDL_RenderDrawRect(renderer, &dst);
+    SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL,
+                     SDL_FLIP_NONE);
+  }
 }
 
 void Game::handleKeyPresses() {
-	if(util::isPressed(pressed, {SDLK_UP, SDLK_w})) {
-		Ship::player.accel(ACCEL_MOD);
-	}
-	if(util::isPressed(pressed, {SDLK_LEFT, SDLK_a}))  Ship::player.rot(STEERING_MOD);	
-	if(util::isPressed(pressed, {SDLK_RIGHT, SDLK_d})) Ship::player.rot(-STEERING_MOD);
-	if(util::isPressed(pressed, SDLK_SPACE)) Ship::player.shoot();
+  if (util::isPressed(pressed, {SDLK_UP, SDLK_w})) {
+    Ship::player.accel(ACCEL_MOD);
+  }
+  if (util::isPressed(pressed, {SDLK_LEFT, SDLK_a}))
+    Ship::player.rot(STEERING_MOD);
+  if (util::isPressed(pressed, {SDLK_RIGHT, SDLK_d}))
+    Ship::player.rot(-STEERING_MOD);
+  if (util::isPressed(pressed, SDLK_SPACE))
+    Ship::player.shoot();
 }
 
 void Game::renderLives() {
-	for (int i = 0; i < Ship::player.getHealth();i++) {
-		SDL_Rect dst = SDL_Rect{890 + 50*i, 20, 40, 60};
-		SDL_RenderCopy(renderer, ShipsTexture, Ship::player.getSrcRect(animationState), &dst);
-	}	
+  for (int i = 0; i < Ship::player.getHealth(); i++) {
+    SDL_Rect dst = SDL_Rect{890 + 50 * i, 20, 40, 60};
+    SDL_RenderCopy(renderer, ShipsTexture,
+                   Ship::player.getSrcRect(animationState), &dst);
+  }
 }
+} // namespace AsteroidShooter

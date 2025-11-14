@@ -2,9 +2,12 @@
 #include "SDL_rect.h"
 #include <vector>
 
-class Beam {
-    private:
-    public:
+
+namespace AsteroidShooter {
+    
+    class Beam {
+        private:
+        public:
         Beam(float rot) : Beam(0,0, rot) {};
         Beam(float X, float Y, float rotation);
         float X,Y,VelX,VelY,rot; 
@@ -16,4 +19,5 @@ class Beam {
         void tick();
         static void filter();
         SDL_Point* points;
-};
+    };
+}

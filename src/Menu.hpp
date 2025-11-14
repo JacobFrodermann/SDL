@@ -3,6 +3,7 @@
 #include "SDL_render.h"
 #include "State.hpp"
 
+namespace AsteroidShooter {
 class Menu : public State {  
     public:
         virtual ~Menu();
@@ -19,3 +20,4 @@ class Menu : public State {
         
         double frameNum = 0;
 };
+}

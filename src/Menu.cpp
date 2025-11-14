@@ -8,6 +8,7 @@
 #include "SDL_surface.h"
 #include "Utils/Util.hpp"
 
+namespace AsteroidShooter {
 int Menu::init(SDL_Renderer * renderer, bool) {
     SDL_Surface * surf = IMG_Load("assets/actionfieldBg1.png");
     this->BgTexture = SDL_CreateTextureFromSurface(renderer, surf);
@@ -64,4 +65,5 @@ Menu::~Menu() {
     SDL_DestroyTexture(this->BgTexture);
     SDL_DestroyTexture(this->StartTexture);
     SDL_DestroyTexture(this->QuitTexture);
+}
 }
