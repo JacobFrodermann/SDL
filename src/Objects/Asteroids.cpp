@@ -91,11 +91,11 @@ void Asteroid::damage() {
             
     if (skin == 0 || skin == 8 || skin == 16) Ship::player.powerUp();
             
-    Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 10, SDL_Color{72,72,72, 50});
+    Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 10, SDL_Color{72,72,72, 120});
 }
 
 bool Asteroid::checkBounds() {
-    return X < 2000 && X > -200 && Y < 1200 && Y > -200;
+    return X > 2000 || X < -200 || Y > 1200 || Y < -200;
 }
 
 }

@@ -1,8 +1,12 @@
 #include "Ship.hpp"
 #include <SDL3/SDL_rect.h>
 #include "../Settings.hpp"
+#include "Particle.hpp"
 #include "Beam.hpp"
+#include "SDL_pixels.h"
+#include <cmath>
 #include <math.h>
+#include <spdlog/spdlog.h>
 
 
 namespace AsteroidShooter {
@@ -45,7 +49,7 @@ namespace AsteroidShooter {
 void Ship::shoot() {
 	if (BeamCD < 0 && !dead) {
 		Beam::shoot(X+20,Y+25,rotation, power); 
-		BeamCD = BEAMCOOLDOWN;
+		BeamCD = BEAM_COOLDOWN;
 	}
 }
 
@@ -63,6 +67,45 @@ void Ship::tick() {
 void Ship::accel(double i) {
 	VelY += i * cos(rotation);
 	VelX += i * sin(rotation);
+
+	spawnEngineParticle();
+	spawnEngineParticle();
+	spawnEngineParticle();
+}
+
+void Ship::spawnEngineParticle() {
+	int colorChoice = Random::rand.nextUInt()%3;
+	spdlog::info(colorChoice);
+	SDL_Color partColor;
+	switch (colorChoice) {
+		case 0:
+			partColor = {250, 70,70, 130};
+			break;
+		case 1:
+			partColor = {250, 140, 50, 130};
+			break;
+		case 2:
+			partColor = { 250, 207, 120, 130};
+			break;
+		default: 
+			partColor = {0,0,0,0};
+	}
+
+
+	SDL_FPoint origin = {static_cast<float>(X+W/2), static_cast<float>(Y+H/2)};
+	
+	double rot = M_PI*1.45 - (rotation + Random::rand.nextFloat(.5)-.25);
+
+	origin.x += cos(rot) * H/3;
+	origin.y += sin(rot) * W/3;
+
+	double PVelX = cos(rot) * -10;
+	double PVelY = sin(rot) * -10;
+
+	double speedFactor = .7 + Random::rand.nextFloat(.5) - .25;
+
+	Particle::spawnParticle(origin.x, origin.y, -PVelX*speedFactor, -PVelY*speedFactor, 8, 5, partColor);
+
 }
 
 void Ship::rot(double i) {

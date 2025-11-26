@@ -3,7 +3,6 @@
 #include "../Settings.hpp"
 #include <algorithm>
 #include <cmath>
-#include <iterator>
 #include <spdlog/spdlog.h>
 #include <vector>
 
@@ -62,11 +61,15 @@ SDL_FRect Beam::getDstRect() {
 }
 
 void Beam::filter(){
-    std::vector<Beam> temp = {};
-    std::copy_if(beams.begin(),beams.end(),std::back_inserter(temp),[](Beam b){
-        return b.X < 2000 && b.X > -200 && b.Y < 1200 && b.Y > -200 && !b.removeMe;
-    });
-    beams = temp;
+    beams.erase(std::remove_if(beams.begin(), beams.end(), 
+    [](Beam b){
+        return b.boundsCheck() || b.removeMe;
+    })
+, beams.end());
+}
+
+bool Beam::boundsCheck() {
+    return X > 2000 || X < -200 || Y > 1200 || Y < -200;
 }
 
 void Beam::calcPoints() {

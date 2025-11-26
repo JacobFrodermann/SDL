@@ -7,6 +7,8 @@ class Ship {
     private:
         SDL_FRect  srcRect, dstRect, colRect;
         int health, invisFrames;
+
+        void spawnEngineParticle();
     public:
         Ship();
         static Ship player;

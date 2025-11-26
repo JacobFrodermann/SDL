@@ -8,7 +8,7 @@ namespace AsteroidShooter {
     class Beam {
         private:
             void calcPoints();
-        
+            bool boundsCheck();
         public:
             Beam(float rot) : Beam(0,0, rot) {};
             Beam(float X, float Y, float rotation);

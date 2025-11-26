@@ -6,6 +6,7 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include "SDL_blendmode.h"
 #include "Settings.hpp"
 #include "Utils/Util.hpp"
 #include <SDL3/SDL.h>
@@ -135,7 +136,7 @@ void Game::doCollisions() {
       if (hit) {
         b.removeMe = true;
         a.damage();
-        
+
         break;
       }
     }
@@ -181,9 +182,11 @@ void Game::renderAsteroids() {
 }
 
 void Game::renderParticles() {
+  SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   for (Particle &p : Particle::particles) {
     SDL_Color c = p.getDrawColor();
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.g, c.a);
+
     SDL_FRect r = p.getRect();
     SDL_RenderFillRect(renderer, &r);
   }

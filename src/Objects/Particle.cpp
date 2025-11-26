@@ -19,8 +19,12 @@ namespace AsteroidShooter {
         };
     }
 
-    void Particle::spawnParticle(int x, int y, double xV, double yV, int liveTime, int size, SDL_Color c) {
-            Particle::particles.push_back({x, y, xV, yV, liveTime, size, c});
+    void Particle::spawnParticle(int x, int y, double xV, double yV, int liveTime, int size, SDL_Color color) {
+        spawnParticle(x, y , xV, yV, liveTime, size, color, {10,10,10});
+    }
+    
+    void Particle::spawnParticle(int x, int y, double xV, double yV, int liveTime, int size, SDL_Color color, SDL_Color var) {
+        Particle::particles.push_back({x, y, xV, yV, liveTime, size, color});
     }
     
     void Particle::explosion(int x, int y, double xV, double yV, int power, SDL_Color c) {
@@ -69,10 +73,11 @@ namespace AsteroidShooter {
 
     SDL_Color Particle::getDrawColor() {
         SDL_Color col = color;
-        col.r += rand() % variation.r - variation.r/2;
-        col.g += rand() % variation.g - variation.g/2;        
-        col.b += rand() % variation.b - variation.b/2;
-        col.a += rand() % variation.a - variation.a/2;
+        col.r = std::clamp(col.r + Random::rand.nextInt() % variation.r - variation.r/2, 0 ,255);
+        col.g = std::clamp(col.g + Random::rand.nextInt() % variation.g - variation.g/2, 0, 255);        
+        col.b = std::clamp(col.b + Random::rand.nextInt() % variation.b - variation.b/2, 0, 255);
+        col.a = std::clamp(col.a + Random::rand.nextInt() % variation.a - variation.a/2, 0, 255);
+        
         return col;
     }
 }

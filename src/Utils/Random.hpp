@@ -10,6 +10,7 @@ namespace AsteroidShooter {
         
         // PCG32
         uint32_t nextUInt();
+        int nextInt();
         
         // float in [-0.25, 0.25]
         float nextFloat(float limit);

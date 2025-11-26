@@ -24,6 +24,10 @@ uint32_t Random::nextUInt() {
     
     return (xorshifted >> rot) | (xorshifted << ((-rot) & 31));
 }
+
+int Random::nextInt() {
+    return nextUInt();
+}
     
 // float in [-0.25, 0.25]
 float Random::nextFloat(float limit) {
