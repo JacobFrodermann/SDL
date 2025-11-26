@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL_render.h"
+#include <SDL3/SDL_render.h>
 #include "State.hpp"
 #include <vector>
 
@@ -12,7 +12,7 @@ class Game : public State {
 		int score;
 	private:
 		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture;
-		SDL_Rect BgRect, ForceFieldSrcRect;
+		const static SDL_FRect BgRect, ForceFieldSrcRect;
 		SDL_Renderer *renderer;
 		float BackgroundOffset, animationState;
 		int tick;

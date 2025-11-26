@@ -1,57 +1,59 @@
 #include "Menu.hpp"
-#include <SDL_image.h>
+#include <SDL3/SDL_mouse.h>
+#include <SDL3_image/SDL_image.h>
 #include <cmath>
 #include <cstddef>
 #include <spdlog/spdlog.h>
-#include "SDL_events.h"
-#include "SDL_render.h"
-#include "SDL_surface.h"
+#include <SDL3/SDL_events.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3/SDL_surface.h>
 #include "Utils/Util.hpp"
 
 namespace AsteroidShooter {
+    
 int Menu::init(SDL_Renderer * renderer, bool) {
-    SDL_Surface * surf = IMG_Load("assets/actionfieldBg1.png");
+    SDL_Surface *surf = IMG_Load("assets/actionfieldBg1.png");
     this->BgTexture = SDL_CreateTextureFromSurface(renderer, surf);
-    SDL_FreeSurface(surf);
+    SDL_DestroySurface(surf);
 
     surf = IMG_Load("assets/Start.png");    
     this->StartTexture = SDL_CreateTextureFromSurface(renderer,surf);
-    SDL_FreeSurface(surf);
+    SDL_DestroySurface(surf);
 
     surf = IMG_Load("assets/Quit.png");
     this->QuitTexture = SDL_CreateTextureFromSurface(renderer, surf);
-    SDL_FreeSurface(surf);
+    SDL_DestroySurface(surf);
     return 0;
 }
 
 int Menu::draw(SDL_Renderer * renderer) {
     frameNum += .1;
 
-    SDL_Rect currentStart = this->StartRect;
+    SDL_FRect currentStart = this->StartRect;
     currentStart.y += cos(frameNum) * 4;
     
-    SDL_Rect currentQuit = this->QuitRect;
+    SDL_FRect currentQuit = this->QuitRect;
     currentQuit.y -= cos(frameNum*.5) * 5;
-    
-    SDL_RenderCopy(renderer, BgTexture, NULL,&this->BgRect);
-    SDL_RenderCopy(renderer, StartTexture, NULL,&currentStart);
-    SDL_RenderCopy(renderer, QuitTexture, NULL, &currentQuit);
+    SDL_RenderTexture(renderer, BgTexture, NULL, &this->BgRect);
+    SDL_RenderTexture(renderer, StartTexture, NULL, &currentStart);
+    SDL_RenderTexture(renderer, QuitTexture, NULL, &currentQuit);
     
     SDL_Event e;
-    int mouseX = 0, mouseY = 0, ret = 0;
+    float mouseX = 0, mouseY = 0;
+    int ret = 0;
     while (SDL_PollEvent(&e) != 0){
-        if (e.type == SDL_QUIT) {
-            ret = SDL_QUIT;
+        if (e.type == SDL_EVENT_QUIT) {
+            ret = SDL_EVENT_QUIT;
         }
-        if (e.type == SDL_MOUSEBUTTONDOWN) {
+        if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
             SDL_GetMouseState(&mouseX, &mouseY);
             //spdlog::debug("click at [" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + "]");
-            SDL_Point p = {mouseX, mouseY};
-            if (util::contains(currentStart,p)) {
+            SDL_FPoint p = {mouseX, mouseY};
+            if (Util::contains(currentStart,p)) {
                 ret = GAME_STATE;
             }
-            if (util::contains(currentQuit, p)) {
-                return SDL_QUIT;
+            if (Util::contains(currentQuit, p)) {
+                return SDL_EVENT_QUIT;
             }
         }
     }

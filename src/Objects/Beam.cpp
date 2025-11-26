@@ -1,5 +1,5 @@
 #include "Beam.hpp"
-#include "SDL_rect.h"
+#include <SDL3/SDL_rect.h>
 #include "../Settings.hpp"
 #include <algorithm>
 #include <cmath>
@@ -25,7 +25,6 @@ namespace AsteroidShooter {
         this->VelX=BEAMSPEED * sin(rotation);
         this->VelY=BEAMSPEED * cos(rotation);
         this->rot = rotation;
-        this->points = (SDL_Point*) malloc(sizeof(SDL_Point)*2);
         this->w = 25;
         this->h = 50;
         this->removeMe = false;
@@ -46,21 +45,21 @@ void Beam::tick() {
     Y += VelY;
     
     points[0] = {
-        .x = static_cast<int>((X + w / 2) - (sin(rot) * 20)),
-        .y = static_cast<int>((Y + h / 2) - (cos(rot) * 20))
+        .x = static_cast<float>((X + w / 2.0) - (sin(rot) * 20)),
+        .y = static_cast<float>((Y + h / 2.0) - (cos(rot) * 20))
     };
     points[1] = {
-        .x = static_cast<int>((X + w / 2) + (sin(rot) * 20)),
-        .y = static_cast<int>((Y + h / 2) + (cos(rot) * 20))
+        .x = static_cast<float>((X + w / 2.0) + (sin(rot) * 20)),
+        .y = static_cast<float>((Y + h / 2.0) + (cos(rot) * 20))
     };
 }
-SDL_Rect Beam::getDstRect() {
-    SDL_Rect ret = SDL_Rect();
-    ret.x = X;
-    ret.y = Y;
-    ret.w = w;
-    ret.h = h;
-    return ret;
+SDL_FRect Beam::getDstRect() {
+    return SDL_FRect{
+    .x = X,
+    .y = Y,
+    .w = static_cast<float>(w),
+    .h = static_cast<float>(h),
+    };
 }
 void Beam::filter(){
     std::vector<Beam> temp = {};

@@ -1,5 +1,5 @@
 #include "Particle.hpp"
-#include "SDL_rect.h"
+#include <SDL3/SDL_rect.h>
 #include <cmath>
 #include <cstdlib>
 #include <spdlog/spdlog.h>
@@ -11,8 +11,13 @@ namespace AsteroidShooter {
     std::vector<Particle> Particle::particles = {};
     Random Particle::random = Random();
 
-    SDL_Rect Particle::getRect() {
-        return SDL_Rect{x, y, size, size};
+    SDL_FRect Particle::getRect() {
+        return SDL_FRect{
+            static_cast<float>(x), 
+            static_cast<float>(y), 
+            static_cast<float>(size), 
+            static_cast<float>(size)
+        };
     }
 
     void Particle::spawnParticle(int x, int y, double xV, double yV, int liveTime, int size, SDL_Color c) {

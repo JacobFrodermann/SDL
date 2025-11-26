@@ -1,6 +1,6 @@
 #pragma once
 #if (!SDL)
-    #include <SDL.h>
+    #include <SDL3/SDL.h>
 #endif
 #define MENU_STATE 1
 #define GAME_STATE 2

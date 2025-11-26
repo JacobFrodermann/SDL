@@ -3,31 +3,32 @@
 #include "Objects/Beam.hpp"
 #include "Objects/Ship.hpp"
 #include "Objects/Particle.hpp"
-#include "SDL_keycode.h"
-#include "SDL_rect.h"
-#include "SDL_render.h"
+#include <SDL3/SDL_keycode.h>
+#include <SDL3/SDL_rect.h>
+#include <SDL3/SDL_render.h>
 #include "Settings.hpp"
 #include "Utils/Util.hpp"
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_render.h>
+#include <SDL3_image/SDL_image.h>
 #include <algorithm>
+#include <math.h>
 #include <cstddef>
 #include <vector>
 
 namespace AsteroidShooter {
 
+const SDL_FRect Game::BgRect = SDL_FRect{690, 0, 540, 2160},
+                Game::ForceFieldSrcRect = {0, 0, 50, 70};
+
 int Game::init(SDL_Renderer *renderer, bool debug) {
   this->debug = debug;
-  this->BgTexture = util::loadTexuture("assets/GameBG.png", renderer);
-  this->ShipsTexture = util::loadTexuture("assets/Ships.png", renderer);
-  this->BeamTexture = util::loadTexuture("assets/beam.png", renderer);
-  this->AsteroidsTexture =
-      util::loadTexuture("assets/asteriodAtlas.png", renderer);
-  this->ForceFieldTexture =
-      util::loadTexuture("assets/forcefield.png", renderer);
+  this->BgTexture = Util::loadTexuture("assets/GameBG.png", renderer);
+  this->ShipsTexture = Util::loadTexuture("assets/Ships.png", renderer);
+  this->BeamTexture = Util::loadTexuture("assets/beam.png", renderer);
+  this->AsteroidsTexture = Util::loadTexuture("assets/asteriodAtlas.png", renderer);
+  this->ForceFieldTexture = Util::loadTexuture("assets/forcefield.png", renderer);
 
-  this->BgRect = {690, 0, 540, 2160};
-  this->ForceFieldSrcRect = {0, 0, 50, 70};
 
   BackgroundOffset = 0;
   animationState = 0;
@@ -45,13 +46,13 @@ int Game::draw(SDL_Renderer *render) {
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
   while (SDL_PollEvent(&e) != 0) {
-    if (e.type == SDL_QUIT) {
-      ret = SDL_QUIT;
-    } else if (e.type == SDL_KEYDOWN) {
-      pressed.push_back(e.key.keysym.sym);
-    } else if (e.type == SDL_KEYUP) {
+    if (e.type == SDL_EVENT_QUIT) {
+      ret = SDL_EVENT_QUIT;
+    } else if (e.type == SDL_EVENT_KEY_DOWN) {
+      pressed.push_back(e.key.key);
+    } else if (e.type == SDL_EVENT_KEY_UP) {
       pressed.erase(
-          std::remove(pressed.begin(), pressed.end(), e.key.keysym.sym),
+          std::remove(pressed.begin(), pressed.end(), e.key.key),
           pressed.end());
     }
   }
@@ -88,13 +89,14 @@ int Game::draw(SDL_Renderer *render) {
 
   renderLives();
 
-  SDL_RenderCopyEx(
+  
+  SDL_RenderTextureRotated(
       renderer, ShipsTexture, Ship::player.getSrcRect(animationState),
       Ship::player.getDstRect(), (Ship::player.rotation - M_PI) * -180 / M_PI,
       NULL, SDL_FLIP_NONE);
 
   if (Ship::player.isInvis()) {
-    SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect,
+    SDL_RenderTextureRotated(renderer, ForceFieldTexture, &ForceFieldSrcRect,
                      Ship::player.getDstRect(),
                      (Ship::player.rotation - M_PI) * -180 / M_PI, NULL,
                      SDL_FLIP_NONE);
@@ -136,19 +138,21 @@ void Game::doCollisions() {
 
 void Game::renderBeams() {
   for (Beam &b : Beam::beams) {
-    SDL_Rect dst = b.getDstRect();
-    SDL_RenderCopyEx(renderer, BeamTexture, NULL, &dst,
-                     (b.rot - M_PI) * -180 / M_PI, NULL, SDL_FLIP_NONE);
+    const SDL_FRect dst = b.getDstRect();
+    SDL_FPoint center = {dst.x + dst.w/2, dst.y + dst.h/2};
+    SDL_RenderTextureRotated(renderer, BeamTexture, NULL, &dst,
+                     (b.rot - M_PI) * -180 / M_PI, &center, SDL_FLIP_NONE);
     b.tick();
   }
 }
 
 void Game::renderAsteroids() {
   for (Asteroid &a : Asteroid::asteroids) {
-    SDL_Rect src = a.getSrcRect(), dst = a.getDstRect();
-    if (debug)
-      SDL_RenderDrawRect(renderer, &dst);
-    SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL,
+    const SDL_FRect src = a.getSrcRect(), dst = a.getDstRect();
+    if (debug) {
+      SDL_RenderRect(renderer, &dst);
+    }
+    SDL_RenderTextureRotated(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL,
                      SDL_FLIP_NONE);
   }
 }
@@ -157,27 +161,27 @@ void Game::renderParticles() {
   for (Particle &p : Particle::particles) {
     SDL_Color c = p.getDrawColor();
     SDL_SetRenderDrawColor(renderer, c.r, c.g, c.g, c.a);
-    SDL_Rect r = p.getRect();
+    SDL_FRect r = p.getRect();
     SDL_RenderFillRect(renderer, &r);
   }
 }
 
 void Game::handleKeyPresses() {
-  if (util::isPressed(pressed, {SDLK_UP, SDLK_w})) {
+  if (Util::isPressed(pressed, {SDLK_UP, SDLK_W})) {
     Ship::player.accel(ACCEL_MOD);
   }
-  if (util::isPressed(pressed, {SDLK_LEFT, SDLK_a}))
+  if (Util::isPressed(pressed, {SDLK_LEFT, SDLK_A}))
     Ship::player.rot(STEERING_MOD);
-  if (util::isPressed(pressed, {SDLK_RIGHT, SDLK_d}))
+  if (Util::isPressed(pressed, {SDLK_RIGHT, SDLK_D}))
     Ship::player.rot(-STEERING_MOD);
-  if (util::isPressed(pressed, SDLK_SPACE))
+  if (Util::isPressed(pressed, SDLK_SPACE))
     Ship::player.shoot();
 }
 
 void Game::renderLives() {
   for (int i = 0; i < Ship::player.getHealth(); i++) {
-    SDL_Rect dst = SDL_Rect{890 + 50 * i, 20, 40, 60};
-    SDL_RenderCopy(renderer, ShipsTexture,
+    const SDL_FRect dst = SDL_FRect{static_cast<float>(890 + 50 * i), 20, 40, 60};
+    SDL_RenderTexture(renderer, ShipsTexture,
                    Ship::player.getSrcRect(animationState), &dst);
   }
 }

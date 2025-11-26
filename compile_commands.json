@@ -3,16 +3,72 @@
     "arguments": [
       "/usr/bin/g++",
       "-c",
+      "-O2",
       "-Wall",
-      "-I/usr/include/SDL2",
+      "-I/usr/include/SDL3",
       "-D_REENTRANT",
       "-g",
+      "-g",
       "-o",
-      "obj/main.o",
-      "src/main.cpp"
+      "debug/Objects/Particle.o",
+      "src/Objects/Particle.cpp"
     ],
-    "directory": "/home/jef/Documents/git/sdl/SDL",
-    "file": "/home/jef/Documents/git/sdl/SDL/src/main.cpp",
-    "output": "/home/jef/Documents/git/sdl/SDL/obj/main.o"
+    "directory": "/home/jef/git/SDL",
+    "file": "/home/jef/git/SDL/src/Objects/Particle.cpp",
+    "output": "/home/jef/git/SDL/debug/Objects/Particle.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-O2",
+      "-Wall",
+      "-I/usr/include/SDL3",
+      "-D_REENTRANT",
+      "-g",
+      "-g",
+      "-o",
+      "debug/Objects/Asteroids.o",
+      "src/Objects/Asteroids.cpp"
+    ],
+    "directory": "/home/jef/git/SDL",
+    "file": "/home/jef/git/SDL/src/Objects/Asteroids.cpp",
+    "output": "/home/jef/git/SDL/debug/Objects/Asteroids.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-O2",
+      "-Wall",
+      "-I/usr/include/SDL3",
+      "-D_REENTRANT",
+      "-g",
+      "-g",
+      "-o",
+      "debug/Objects/Beam.o",
+      "src/Objects/Beam.cpp"
+    ],
+    "directory": "/home/jef/git/SDL",
+    "file": "/home/jef/git/SDL/src/Objects/Beam.cpp",
+    "output": "/home/jef/git/SDL/debug/Objects/Beam.o"
+  },
+  {
+    "arguments": [
+      "/usr/bin/g++",
+      "-c",
+      "-O2",
+      "-Wall",
+      "-I/usr/include/SDL3",
+      "-D_REENTRANT",
+      "-g",
+      "-g",
+      "-o",
+      "debug/Objects/Ship.o",
+      "src/Objects/Ship.cpp"
+    ],
+    "directory": "/home/jef/git/SDL",
+    "file": "/home/jef/git/SDL/src/Objects/Ship.cpp",
+    "output": "/home/jef/git/SDL/debug/Objects/Ship.o"
   }
 ]

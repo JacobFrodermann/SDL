@@ -1,6 +1,5 @@
-#include "SDL_pixels.h"
-#include "SDL_rect.h"
-#include <cstdlib>
+#include <SDL3/SDL_pixels.h>
+#include <SDL3/SDL_rect.h>
 #include <vector>
 #include "../Utils/Random.hpp"
 
@@ -17,7 +16,7 @@ namespace AsteroidShooter {
             static void spawnParticle(int x, int y, double xV, double yV, int liveTime, int size, SDL_Color c, SDL_Color v);
             
             static void explosion(int x, int y, double xV, double yV, int stength, SDL_Color c);
-            SDL_Rect getRect();
+            SDL_FRect getRect();
             
             static void tick();
         private:

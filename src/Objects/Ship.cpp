@@ -1,8 +1,8 @@
 #include "Ship.hpp"
-#include "SDL_rect.h"
+#include <SDL3/SDL_rect.h>
 #include "../Settings.hpp"
 #include "Beam.hpp"
-#include <cmath>
+#include <math.h>
 
 
 namespace AsteroidShooter {
@@ -18,27 +18,28 @@ namespace AsteroidShooter {
 		health = 3;
 		BeamCD = 0;
 		rotation = M_PI;
-		srcRect = SDL_Rect{0,0,40,60};
+		srcRect = SDL_FRect{0,0,40,60};
 		power = 3;
 	}
 	
-	SDL_Rect* Ship::getDstRect() {
-		dstRect = SDL_Rect{static_cast<int>(X), static_cast<int>(Y) , W ,H};;
+	const SDL_FRect* Ship::getDstRect() {
+		dstRect = SDL_FRect{static_cast<float>(X), static_cast<float>(Y) , static_cast<float>(W) ,static_cast<float>(H)};;
 		return &dstRect;
 	}
 	
-	SDL_Rect* Ship::getSrcRect(int i) {
+	const SDL_FRect* Ship::getSrcRect(int i) {
 		srcRect.y = 60 * i;
 		return &srcRect;
 	}
 	
-	SDL_Rect Ship::getColRect() {
-		return  SDL_Rect{
-			static_cast<int>( X + 5  ),
-		static_cast<int>( Y + 15 ),
-		static_cast<int>( W - 5  ),
-		static_cast<int>( H - 25 ),
+	const SDL_FRect* Ship::getColRect() {
+		colRect = SDL_FRect{
+			static_cast<float>( X + 5  ),
+		static_cast<float>( Y + 15 ),
+		static_cast<float>( W - 5  ),
+		static_cast<float>( H - 25 ),
 	};
+	return &colRect;
 }
 
 void Ship::shoot() {

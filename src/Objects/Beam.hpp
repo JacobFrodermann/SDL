@@ -1,5 +1,5 @@
 #pragma once
-#include "SDL_rect.h"
+#include <SDL3/SDL_rect.h>
 #include <vector>
 
 
@@ -15,9 +15,9 @@ namespace AsteroidShooter {
         bool removeMe;
         static std::vector<Beam> beams;
         static void shoot(float X,float Y,float rotation, int power);
-        SDL_Rect getDstRect();
+        SDL_FRect getDstRect();
         void tick();
         static void filter();
-        SDL_Point* points;
+        SDL_FPoint points[];
     };
 }

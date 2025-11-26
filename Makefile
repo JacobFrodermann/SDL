@@ -2,9 +2,9 @@
 DBGFLAGS = -g
 
 
-COBJFLAGS=-c -O2 -Wall -I/usr/include/SDL2 -D_REENTRANT -g 
+COBJFLAGS=-c -O2 -Wall -I/usr/include/SDL3 -D_REENTRANT -g 
 
-CFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL2 -lSDL2_image -lspdlog -lfmt -std=c++17
+CFLAGS= -L /usr/local/lib/ -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL3 -lSDL3_image -lspdlog -lfmt -std=c++17
 
 CC=g++
 

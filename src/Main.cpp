@@ -1,10 +1,14 @@
+#include <SDL3/SDL_error.h>
+#include <SDL3/SDL_render.h>
+#include <cstddef>
 #include <cstdio>
 #include <cstring>
 #include <iostream>
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "Objects/Asteroid.hpp"
+#include <SDL3/SDL_hints.h>
 #include "Utils/InitError.hpp"
-#include <SDL_image.h>
+#include <SDL3_image/SDL_image.h>
 #include "Menu.hpp"
 #include <memory>
 #include "Game.hpp"
@@ -28,18 +32,14 @@ public:
 };
 
 SDL::SDL(Uint32 flags) {
-	if (SDL_Init(flags) != 0)throw InitError();
+	if (!SDL_Init(flags) != 0) throw InitError(SDL_GetError());
 
-	if (SDL_CreateWindowAndRenderer(1920, 1080, SDL_WINDOW_SHOWN, &m_window, &m_renderer) != 0) throw InitError();
+	spdlog::info("Initialzied SDL");
+
+	if (!SDL_CreateWindowAndRenderer("AsteroidShooter",1920, 1080, 0, &m_window, &m_renderer) != 0) throw InitError(SDL_GetError());
 
     //SDL_SetWindowFullscreen(m_window, true);
-    SDL_ShowCursor(true);
-	SDL_SetHint( SDL_HINT_RENDER_SCALE_QUALITY, "2" );
-
-	int imgFlags = IMG_INIT_PNG;
-	if( !( IMG_Init( imgFlags ) & imgFlags ) ) {
-		printf( "SDL_image could not initialize! SDL_image Error: %s\n", IMG_GetError() );
-	}
+    SDL_ShowCursor();
 }
 
 SDL::~SDL() {
@@ -69,12 +69,12 @@ void SDL::draw() {
 		SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
 		SDL_RenderClear(m_renderer);
 
-		SDL_RenderCopy(m_renderer, bgTexture, NULL,NULL);
+		SDL_RenderTexture(m_renderer, bgTexture, NULL,NULL);
 
 		int todo = state->draw(m_renderer);
 
 		switch (todo) {
-		case SDL_QUIT:
+		case SDL_EVENT_QUIT:
 			quit = true;
             SDL_Quit();
 			break;
@@ -118,7 +118,7 @@ int main(int argc, char* argv[]) {
 
 
 	try {
-		AsteroidShooter::SDL sdl(SDL_INIT_VIDEO | SDL_INIT_TIMER);
+		AsteroidShooter::SDL sdl(SDL_INIT_VIDEO);
 		sdl.debug = debug;
 		sdl.draw();
 
