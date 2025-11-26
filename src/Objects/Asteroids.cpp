@@ -6,8 +6,10 @@
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
+#include "SDL_pixels.h"
 #include "SDL_rect.h"
 #include "Ship.hpp"
+#include "Particle.hpp"
 #include "../Utils/Util.hpp"
 #include "../Settings.hpp"
 
@@ -20,7 +22,7 @@ namespace AsteroidShooter {
         w = 107;
         h = 112;
         radius = rand() % 30 + 35 + score / 5;
-        health = round( (int)(radius / 50) + pow(radius,2) / 650); // f(x) = x/50 + x²/650
+        health = 2;//round( (int)(radius / 50) + pow(radius,2) / 650); // f(x) = x/50 + x²/650
         rs = util::random_float(.1, 2);
 
         skin = std::rand() % 64;
@@ -66,10 +68,14 @@ void Asteroid::filter() {
     std::copy_if(asteroids.begin(), asteroids.end(), std::back_inserter(temp),[](Asteroid a) -> bool{
         if (a.health <= 0) {
             if (a.skin == 0 || a.skin == 8 || a.skin == 16) Ship::player.powerUp();
+            
+            Particle::explosion(a.X + a.w/2, a.Y + a.h /2, a.VelX, a.VelY, 10, SDL_Color{72,72,72, 50});
             return false;
         };
         return a.checkBounds();
     });
+
+    Asteroid::asteroids = temp;
 }  
 
 bool Asteroid::intersects(SDL_Rect r) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
@@ -91,6 +97,7 @@ bool Asteroid::intersects(SDL_Point p) {
 
 void Asteroid::damage() {
     health --;
+    spdlog::info(health);
     Asteroid::filter();
 }
 

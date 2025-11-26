@@ -19,7 +19,7 @@ namespace AsteroidShooter {
 		BeamCD = 0;
 		rotation = M_PI;
 		srcRect = SDL_Rect{0,0,40,60};
-		power = 1;
+		power = 3;
 	}
 	
 	SDL_Rect* Ship::getDstRect() {

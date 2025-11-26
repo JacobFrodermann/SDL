@@ -2,6 +2,7 @@
 #include "Objects/Asteroid.hpp"
 #include "Objects/Beam.hpp"
 #include "Objects/Ship.hpp"
+#include "Objects/Particle.hpp"
 #include "SDL_keycode.h"
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -77,6 +78,10 @@ int Game::draw(SDL_Renderer *render) {
   if ((int)animationState == 4)
     animationState = 0; // reset animation before 5
 
+  renderParticles();
+
+  Particle::tick();
+
   renderAsteroids();
 
   renderBeams();
@@ -87,6 +92,7 @@ int Game::draw(SDL_Renderer *render) {
       renderer, ShipsTexture, Ship::player.getSrcRect(animationState),
       Ship::player.getDstRect(), (Ship::player.rotation - M_PI) * -180 / M_PI,
       NULL, SDL_FLIP_NONE);
+
   if (Ship::player.isInvis()) {
     SDL_RenderCopyEx(renderer, ForceFieldTexture, &ForceFieldSrcRect,
                      Ship::player.getDstRect(),
@@ -144,6 +150,15 @@ void Game::renderAsteroids() {
       SDL_RenderDrawRect(renderer, &dst);
     SDL_RenderCopyEx(renderer, AsteroidsTexture, &src, &dst, a.rot, NULL,
                      SDL_FLIP_NONE);
+  }
+}
+
+void Game::renderParticles() {
+  for (Particle &p : Particle::particles) {
+    SDL_Color c = p.getDrawColor();
+    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.g, c.a);
+    SDL_Rect r = p.getRect();
+    SDL_RenderFillRect(renderer, &r);
   }
 }
 

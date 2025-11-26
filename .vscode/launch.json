@@ -15,7 +15,7 @@
       "stopAtEntry": false,
       "externalConsole": false,
       "cwd": "/home/jef/git/SDL",
-      "program": "/home/jef/git/SDL/build/Debug/outDebug",
+      "program": "/home/jef/git/SDL/debug/AsteroidShooter",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [
