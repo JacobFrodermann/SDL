@@ -18,6 +18,6 @@ namespace AsteroidShooter {
         SDL_FRect getDstRect();
         void tick();
         static void filter();
-        SDL_FPoint points[];
+        SDL_FPoint head,tail;
     };
 }

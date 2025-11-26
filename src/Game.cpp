@@ -14,6 +14,8 @@
 #include <algorithm>
 #include <math.h>
 #include <cstddef>
+#include <spdlog/spdlog.h>
+#include <string>
 #include <vector>
 
 namespace AsteroidShooter {
@@ -115,11 +117,11 @@ Game::~Game() {
 void Game::doCollisions() {
   for (Beam &b : Beam::beams) {
     for (Asteroid &a : Asteroid::asteroids) {
-      bool hit = a.intersects(b.points[0]);
-      hit = hit || a.intersects(b.points[1]);
+      bool hit = a.intersects(b.head);
+      hit = hit || a.intersects(b.tail);
       if (hit) {
         b.removeMe = true;
-        b.X = 1000000; // move out of bounds deleted by asteroid::filter
+        b.X = 1000000; // move out of bounds deleted by beam::filter
         a.damage();
       }
     }
@@ -139,9 +141,8 @@ void Game::doCollisions() {
 void Game::renderBeams() {
   for (Beam &b : Beam::beams) {
     const SDL_FRect dst = b.getDstRect();
-    SDL_FPoint center = {dst.x + dst.w/2, dst.y + dst.h/2};
     SDL_RenderTextureRotated(renderer, BeamTexture, NULL, &dst,
-                     (b.rot - M_PI) * -180 / M_PI, &center, SDL_FLIP_NONE);
+                     (b.rot - M_PI) * -180 / M_PI, NULL, SDL_FLIP_NONE);
     b.tick();
   }
 }

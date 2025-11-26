@@ -2,6 +2,7 @@
 #include <SDL3/SDL_render.h>
 #include <cstddef>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <SDL3/SDL.h>
@@ -76,7 +77,7 @@ void SDL::draw() {
 		switch (todo) {
 		case SDL_EVENT_QUIT:
 			quit = true;
-            SDL_Quit();
+            atexit(SDL_Quit);
 			break;
 		case GAME_STATE:
 			spdlog::info("Started Game");

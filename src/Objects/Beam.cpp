@@ -3,7 +3,6 @@
 #include "../Settings.hpp"
 #include <algorithm>
 #include <cmath>
-#include <cstdlib>
 #include <iterator>
 #include <vector>
 
@@ -11,6 +10,7 @@ namespace AsteroidShooter {
     
     
     std::vector<Beam> Beam::beams = {};
+
     Beam templates[15]=  {  Beam(0), 
         Beam(0), Beam(0),
         Beam(.1), Beam(0), Beam(-.1),
@@ -44,11 +44,11 @@ void Beam::tick() {
     X += VelX;
     Y += VelY;
     
-    points[0] = {
+    head = {
         .x = static_cast<float>((X + w / 2.0) - (sin(rot) * 20)),
         .y = static_cast<float>((Y + h / 2.0) - (cos(rot) * 20))
     };
-    points[1] = {
+    tail = {
         .x = static_cast<float>((X + w / 2.0) + (sin(rot) * 20)),
         .y = static_cast<float>((Y + h / 2.0) + (cos(rot) * 20))
     };
