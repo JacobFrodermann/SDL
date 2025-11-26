@@ -7,6 +7,10 @@
 #include <SDL3/SDL_events.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3/SDL_surface.h>
+#include <string>
+#include "SDL_oldnames.h"
+#include "SDL_rect.h"
+#include "Settings.hpp"
 #include "Utils/Util.hpp"
 
 namespace AsteroidShooter {
@@ -40,21 +44,33 @@ int Menu::draw(SDL_Renderer * renderer) {
     
     SDL_Event e;
     float mouseX = 0, mouseY = 0;
-    int ret = 0;
+    int ret = 0, realX, realY;
+    SDL_FPoint p;
     while (SDL_PollEvent(&e) != 0){
-        if (e.type == SDL_EVENT_QUIT) {
+        switch (e.type) {
+        case SDL_EVENT_QUIT:
             ret = SDL_EVENT_QUIT;
-        }
-        if (e.type == SDL_EVENT_MOUSE_BUTTON_DOWN) {
+            break;
+        case SDL_EVENT_MOUSE_BUTTON_DOWN: 
             SDL_GetMouseState(&mouseX, &mouseY);
-            //spdlog::debug("click at [" + std::to_string(mouseX) + ", " + std::to_string(mouseY) + "]");
-            SDL_FPoint p = {mouseX, mouseY};
+
+            p = {mouseX, mouseY};
+            
+            SDL_GetCurrentRenderOutputSize(renderer, &realX, &realY);
+
+            p.x *= 1.0 / (realX / LOGICAL_WIDTH );
+            p.y *= 1.0 / (realY / LOGICAL_HEIGHT);
+            
             if (Util::contains(currentStart,p)) {
                 ret = GAME_STATE;
             }
             if (Util::contains(currentQuit, p)) {
                 return SDL_EVENT_QUIT;
             }
+            break;
+        case SDL_EVENT_WINDOW_RESIZED:
+            SDL_SetRenderLogicalPresentation(renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+            break;
         }
     }
 

@@ -9,7 +9,6 @@ namespace AsteroidShooter {
     
 
     std::vector<Particle> Particle::particles = {};
-    Random Particle::random = Random();
 
     SDL_FRect Particle::getRect() {
         return SDL_FRect{
@@ -28,7 +27,7 @@ namespace AsteroidShooter {
         for (int i = 0; i < static_cast<int>(sqrt(power)); i ++) {
             double Xoffset = rand() % power / 5.0 - power / 10.0;
             double Yoffset = rand() % power / 5.0 - power / 10.0;
-            double sizeOffset = 1 + (random.nextFloat(.5) - .25);
+            double sizeOffset = 1 + (Random::rand.nextFloat(.5) - .25);
 
             Particle::particles.push_back({
                 x, 

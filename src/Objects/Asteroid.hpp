@@ -1,6 +1,7 @@
 #pragma once
 #include <SDL3/SDL_rect.h>
 #include <vector>
+#include "../Utils/Random.hpp"
 
 namespace AsteroidShooter {
 
@@ -22,6 +23,7 @@ public:
   
   float X, Y, VelX, VelY, rot, h, w, rs;
   int skin, radius, health;
+  bool removeMe = false;
 };
 
 } // namespace AsteroidShooter

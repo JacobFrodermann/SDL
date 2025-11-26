@@ -8,6 +8,7 @@
 #include <SDL3/SDL.h>
 #include "Objects/Asteroid.hpp"
 #include <SDL3/SDL_hints.h>
+#include "SDL_video.h"
 #include "Utils/InitError.hpp"
 #include <SDL3_image/SDL_image.h>
 #include "Menu.hpp"
@@ -37,7 +38,9 @@ SDL::SDL(Uint32 flags) {
 
 	spdlog::info("Initialzied SDL");
 
-	if (!SDL_CreateWindowAndRenderer("AsteroidShooter",1920, 1080, 0, &m_window, &m_renderer) != 0) throw InitError(SDL_GetError());
+	if (!SDL_CreateWindowAndRenderer("AsteroidShooter", 1920, 1080, SDL_WINDOW_FULLSCREEN , &m_window, &m_renderer) != 0) throw InitError(SDL_GetError());
+
+	SDL_SetRenderLogicalPresentation(m_renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
 
     //SDL_SetWindowFullscreen(m_window, true);
     SDL_ShowCursor();
@@ -71,6 +74,7 @@ void SDL::draw() {
 		SDL_RenderClear(m_renderer);
 
 		SDL_RenderTexture(m_renderer, bgTexture, NULL,NULL);
+
 
 		int todo = state->draw(m_renderer);
 

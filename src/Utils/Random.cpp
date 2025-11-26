@@ -5,6 +5,8 @@
 
 namespace AsteroidShooter {
 
+Random Random::rand = Random();
+
 Random::Random() {
     // Seed with true randomness so the sequence changes every run.
     std::random_device rd;

@@ -5,6 +5,8 @@ namespace AsteroidShooter {
     class Random {
         public:
         Random();
+
+        static Random rand;
         
         // PCG32
         uint32_t nextUInt();

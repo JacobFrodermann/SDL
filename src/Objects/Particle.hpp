@@ -23,6 +23,5 @@ namespace AsteroidShooter {
             SDL_Color color, variation = {10, 10 ,10 ,10};
             double xV, yV;
             int liveTime;
-            static Random random;
     };
 }

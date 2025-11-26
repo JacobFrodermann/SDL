@@ -6,6 +6,7 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
+#include "SDL_oldnames.h"
 #include "Settings.hpp"
 #include "Utils/Util.hpp"
 #include <SDL3/SDL.h>
@@ -48,14 +49,21 @@ int Game::draw(SDL_Renderer *render) {
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
   while (SDL_PollEvent(&e) != 0) {
-    if (e.type == SDL_EVENT_QUIT) {
+    switch (e.type) {
+      case SDL_EVENT_QUIT: 
       ret = SDL_EVENT_QUIT;
-    } else if (e.type == SDL_EVENT_KEY_DOWN) {
+      break;
+    case SDL_EVENT_KEY_DOWN: 
       pressed.push_back(e.key.key);
-    } else if (e.type == SDL_EVENT_KEY_UP) {
+      break;
+    case SDL_EVENT_KEY_UP:
       pressed.erase(
           std::remove(pressed.begin(), pressed.end(), e.key.key),
           pressed.end());
+      break;
+    case SDL_EVENT_WINDOW_RESIZED:
+      SDL_SetRenderLogicalPresentation(render, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    break;
     }
   }
 
@@ -116,23 +124,33 @@ Game::~Game() {
 
 void Game::doCollisions() {
   for (Beam &b : Beam::beams) {
+    if (b.removeMe) continue;
+
     for (Asteroid &a : Asteroid::asteroids) {
+      if (a.removeMe) continue;
+
       bool hit = a.intersects(b.head);
       hit = hit || a.intersects(b.tail);
+
+      
       if (hit) {
+        spdlog::info("hit");
         b.removeMe = true;
-        b.X = 1000000; // move out of bounds deleted by beam::filter
         a.damage();
       }
     }
   }
+
   bool hit = false;
   for (Asteroid &a : Asteroid::asteroids) {
+    if (a.removeMe) continue;
+
     if (a.intersects(Ship::player.getColRect())) {
       hit = true;
       break;
     }
   }
+
   if (hit) {
     Ship::player.damage(1);
   }
@@ -140,6 +158,8 @@ void Game::doCollisions() {
 
 void Game::renderBeams() {
   for (Beam &b : Beam::beams) {
+    if (b.removeMe) continue;
+
     const SDL_FRect dst = b.getDstRect();
     SDL_RenderTextureRotated(renderer, BeamTexture, NULL, &dst,
                      (b.rot - M_PI) * -180 / M_PI, NULL, SDL_FLIP_NONE);
@@ -149,6 +169,8 @@ void Game::renderBeams() {
 
 void Game::renderAsteroids() {
   for (Asteroid &a : Asteroid::asteroids) {
+    if (a.removeMe) continue;
+
     const SDL_FRect src = a.getSrcRect(), dst = a.getDstRect();
     if (debug) {
       SDL_RenderRect(renderer, &dst);
