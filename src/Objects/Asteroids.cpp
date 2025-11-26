@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdlib>
-#include <iterator>
 #include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
@@ -56,6 +55,7 @@ const SDL_FRect Asteroid::getDstRect() {
 void Asteroid::spawn(int score){
     if (rand() % ASTEROID_SPAWNRATE == 0) asteroids.push_back(Asteroid(score));
 }
+
 void Asteroid::tick() {
     for (Asteroid &a : asteroids) {
         a.X += a.VelX;
@@ -63,56 +63,35 @@ void Asteroid::tick() {
         a.rot += a.rs;
     }
 }
-void Asteroid::filter() {
-    std::vector<Asteroid> temp = {};
-    std::copy_if(asteroids.begin(), asteroids.end(), std::back_inserter(temp),[](Asteroid a) -> bool{
-        if (a.health <= 0 || a.removeMe) {
-            if (a.skin == 0 || a.skin == 8 || a.skin == 16) Ship::player.powerUp();
-            
-            Particle::explosion(a.X + a.w/2, a.Y + a.h /2, a.VelX, a.VelY, 10, SDL_Color{72,72,72, 50});
-            return false;
-        };
-        return a.checkBounds();
-    });
 
-    Asteroid::asteroids = temp;
+void Asteroid::filter() {
+    asteroids.erase(
+        std::remove_if(asteroids.begin(), asteroids.end(),
+        [](Asteroid& a) -> bool {
+        return a.removeMe || a.checkBounds() || a.health <= 0;
+        }
+    ), asteroids.end());
 }  
 
-bool Asteroid::intersects(const SDL_FRect* r) { // src: https://stackoverflow.com/questions/481144/equation-for-testing-if-a-point-is-inside-a-circle
-    bool hit = false;
-    hit = hit || intersects(SDL_FPoint{r->x,r->y               });
-    hit = hit || intersects(SDL_FPoint{r->x,r->y + r->h        });
-    hit = hit || intersects(SDL_FPoint{r->x + r->w,r->y        });
-    hit = hit || intersects(SDL_FPoint{r->x + r->w,r->y + r->h });
-
-    if (hit) {
-        spdlog::info("hit at {} {}", r->x, r->y);
-    }
-    
-    return hit;
+bool Asteroid::intersects(const SDL_FRect* r) {
+    return     intersects(SDL_FPoint{r->x,r->y               })
+            || intersects(SDL_FPoint{r->x,r->y + r->h        })
+            || intersects(SDL_FPoint{r->x + r->w,r->y        })
+            || intersects(SDL_FPoint{r->x + r->w,r->y + r->h });
 }
 
 bool Asteroid::intersects(SDL_FPoint p) {
-    SDL_FPoint center = {
-        +w/2,
-        Y+h/2
-    };
-    
-
-    bool temp = Util::inCircle(center, radius, p);
-    
-    if (temp) {
-        spdlog::info("hit at {} {}", p.x, p.y);
-    }
-
-    return temp;
+    return Util::inCircle({X+w/2, Y+h/2}, radius, p);
 }
 
 void Asteroid::damage() {
     health --;
 
     if (health == 0) removeMe = true;
-    //spdlog::info(health);
+            
+    if (skin == 0 || skin == 8 || skin == 16) Ship::player.powerUp();
+            
+    Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 10, SDL_Color{72,72,72, 50});
 }
 
 bool Asteroid::checkBounds() {

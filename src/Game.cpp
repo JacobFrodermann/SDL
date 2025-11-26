@@ -6,7 +6,6 @@
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
-#include "SDL_oldnames.h"
 #include "Settings.hpp"
 #include "Utils/Util.hpp"
 #include <SDL3/SDL.h>
@@ -75,11 +74,11 @@ int Game::draw(SDL_Renderer *render) {
     doCollisions();
 
     if (tick == 1) {
-      Beam::filter();
       Asteroid::filter();
+      Beam::filter();
       score++;
     }
-
+    
     Asteroid::tick();
   }
 
@@ -134,9 +133,10 @@ void Game::doCollisions() {
 
       
       if (hit) {
-        spdlog::info("hit");
         b.removeMe = true;
         a.damage();
+        
+        break;
       }
     }
   }
