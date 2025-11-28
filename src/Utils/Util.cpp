@@ -1,4 +1,3 @@
-#include <SDL3/SDL.h>
 #include <algorithm>
 #include <cstdlib>
 #include <initializer_list>
@@ -7,6 +6,7 @@
 #include <algorithm>
 #include <vector>
 #include "Util.hpp"
+#include <SDL3/SDL.h>
 #include <SDL3_image/SDL_image.h>
 #include <SDL3/SDL_error.h>
 #include <SDL3/SDL_surface.h>
@@ -27,11 +27,11 @@ bool Util::contains(SDL_FRect rect, SDL_FPoint point) {
     return rect.x <= point.x && rect.x+rect.w >= point.x && rect.y <= point.y && rect.y+rect.h >= point.y;
 }
 
-bool Util::isPressed(std::vector<int> pressed, SDL_Keycode key) {
+bool Util::isPressed(std::vector<SDL_Keycode> pressed, SDL_Keycode key) {
     return std::find(pressed.begin(), pressed.end(), key) != pressed.end();
 }
 
-bool Util::isPressed(std::vector<int> pressed, std::initializer_list<SDL_Keycode> key) {
+bool Util::isPressed(std::vector<SDL_Keycode> pressed, std::initializer_list<SDL_Keycode> key) {
     for (SDL_Keycode k : key) {
         if (std::find(pressed.begin(), pressed.end(), k) != pressed.end()) return true;
     }

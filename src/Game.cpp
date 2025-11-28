@@ -26,11 +26,13 @@ const SDL_FRect Game::BgRect = SDL_FRect{690, 0, 540, 2160},
 
 int Game::init(SDL_Renderer *renderer, bool debug) {
   this->debug = debug;
+
   this->BgTexture = Util::loadTexuture("assets/GameBG.png", renderer);
   this->ShipsTexture = Util::loadTexuture("assets/Ships.png", renderer);
   this->BeamTexture = Util::loadTexuture("assets/beam.png", renderer);
   this->AsteroidsTexture = Util::loadTexuture("assets/asteriodAtlas.png", renderer);
   this->ForceFieldTexture = Util::loadTexuture("assets/forcefield.png", renderer);
+  this->MenuTexture = Util::loadTexuture("assets/GameMenuBG.png", renderer);
 
 
   BackgroundOffset = 0;
@@ -42,33 +44,33 @@ int Game::init(SDL_Renderer *renderer, bool debug) {
 
 int Game::draw(SDL_Renderer *render) {
   this->renderer = render;
-  tick++;
-  tick %= 20;
-  SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
-
+  
   handleEvents();
 
-  handleKeyPresses();
-
-  doCollisions();
-  
-  if (tick == 1) {
-    Asteroid::filter();
-    Beam::filter();
-    score++;
+  if (!paused) {
+    tick++;
+    tick %= 20;
+    
+    if (tick == 1) {
+      Asteroid::filter();
+      Beam::filter();
+      score++;
+    }
+    
+    Ship::player.tick();
+    
+    Beam::tick();
+    
+    Asteroid::spawn(score);
+    Asteroid::tick();
+    
+    Particle::tick();
+    
+    doCollisions();
+    
+    BackgroundOffset -= .1f;
+    animationState += .05f;
   }
-
-  Ship::player.tick();
-  
-  Beam::tick();
-  
-  Asteroid::spawn(score);
-  Asteroid::tick();
-
-  Particle::tick();
-
-  BackgroundOffset -= .1f;
-  animationState += .05f;
 
   if ((int)animationState == 4)
     animationState = 0; // reset animation before 5
@@ -83,6 +85,8 @@ int Game::draw(SDL_Renderer *render) {
 
   renderShip();
 
+  renderMenu();
+
   return shouldQuit ? SDL_EVENT_QUIT : 0;
 }
 
@@ -91,6 +95,7 @@ Game::~Game() {
   SDL_DestroyTexture(this->ShipsTexture);
   SDL_DestroyTexture(this->BeamTexture);
   SDL_DestroyTexture(this->AsteroidsTexture);
+  SDL_DestroyTexture(this->ForceFieldTexture);
 }
 
 void Game::doCollisions() {
@@ -162,16 +167,40 @@ void Game::renderParticles() {
   }
 }
 
-void Game::handleKeyPresses() {
-  if (Util::isPressed(pressed, {SDLK_UP, SDLK_W})) {
-    Ship::player.accel(ACCEL_MOD);
+void Game::handleEvents() {
+  SDL_Event e;
+  
+  while (SDL_PollEvent(&e) != 0) {
+    switch (e.type) {
+      case SDL_EVENT_QUIT: 
+      shouldQuit = true;
+      break;
+    case SDL_EVENT_KEY_DOWN: 
+      pressed.push_back(e.key.key);
+      break;
+    case SDL_EVENT_KEY_UP:
+      pressed.erase(
+          std::remove(pressed.begin(), pressed.end(), e.key.key),
+          pressed.end());
+      break;
+    case SDL_EVENT_WINDOW_RESIZED:
+      SDL_SetRenderLogicalPresentation(renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    break;
+    }
   }
+  
+  
+  if (Util::isPressed(pressed, {SDLK_UP, SDLK_W})) 
+    Ship::player.accel(ACCEL_MOD);
   if (Util::isPressed(pressed, {SDLK_LEFT, SDLK_A}))
     Ship::player.rot(STEERING_MOD);
   if (Util::isPressed(pressed, {SDLK_RIGHT, SDLK_D}))
     Ship::player.rot(-STEERING_MOD);
   if (Util::isPressed(pressed, SDLK_SPACE))
     Ship::player.shoot();
+  if (Util::isPressed(pressed, SDLK_ESCAPE)) {
+    paused = !paused;
+  }
 }
 
 void Game::renderLives() {
@@ -196,27 +225,13 @@ void Game::renderShip() {
   }
 }
 
-void Game::handleEvents() {
-  SDL_Event e;
-  
-  while (SDL_PollEvent(&e) != 0) {
-    switch (e.type) {
-      case SDL_EVENT_QUIT: 
-      shouldQuit = true;
-      break;
-    case SDL_EVENT_KEY_DOWN: 
-      pressed.push_back(e.key.key);
-      break;
-    case SDL_EVENT_KEY_UP:
-      pressed.erase(
-          std::remove(pressed.begin(), pressed.end(), e.key.key),
-          pressed.end());
-      break;
-    case SDL_EVENT_WINDOW_RESIZED:
-      SDL_SetRenderLogicalPresentation(renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-    break;
-    }
+void Game::renderMenu() {
+  if (!paused && !dead) {
+    return;
   }
-  
+
+  const SDL_FRect dst = {0, 0, 300, 250};
+
+  SDL_RenderTexture(renderer, MenuTexture, NULL, &dst);  
 }
 } // namespace AsteroidShooter

@@ -1,5 +1,6 @@
 #pragma once
 #include <SDL3/SDL_render.h>
+#include <SDL3/SDL_keycode.h>
 #include "State.hpp"
 #include <vector>
 
@@ -11,14 +12,15 @@ class Game : public State {
 		virtual int init(SDL_Renderer* renderer, bool debug);
 		int score;
 	private:
-		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture;
+		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture, *MenuTexture;
 		const static SDL_FRect BgRect, ForceFieldSrcRect;
 		SDL_Renderer *renderer;
 		float BackgroundOffset, animationState;
 		int tick;
-		bool dead, shouldQuit;
-		std::vector<int> pressed;
-		void doCollisions(), renderBeams(), renderAsteroids(), renderLives(), renderParticles(), renderShip();
-		void handleEvents(), handleKeyPresses();
+		bool dead, shouldQuit, paused = false;
+		std::vector<SDL_Keycode> pressed;
+		void doCollisions();
+		void renderBeams(), renderAsteroids(), renderLives(), renderParticles(), renderShip(), renderMenu();
+		void handleEvents();
 };
 }
