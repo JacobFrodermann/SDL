@@ -18,7 +18,7 @@ namespace AsteroidShooter {
             static std::vector<Beam> beams;
             static void shoot(float X,float Y,float rotation, int power);
             SDL_FRect getDstRect();
-            void tick();
+            static void tick();
             static void filter();
             SDL_FPoint head,tail;
     };

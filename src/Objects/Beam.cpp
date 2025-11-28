@@ -45,10 +45,12 @@ namespace AsteroidShooter {
 }
 
 void Beam::tick() {
-    X += VelX;
-    Y += VelY;
-    
-    calcPoints();
+    for (Beam &b : beams) {
+        b.X += b.VelX;
+        b.Y += b.VelY;
+        
+        b.calcPoints();
+    }
 }
 
 SDL_FRect Beam::getDstRect() {

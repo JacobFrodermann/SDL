@@ -32,7 +32,12 @@ namespace AsteroidShooter {
 	}
 	
 	const SDL_FRect* Ship::getSrcRect(int i) {
-		srcRect.y = 60 * i;
+		if (Ship::player.dead) {
+			srcRect.y = 4*60;
+		} else {
+			srcRect.y = 60 * i;
+		}
+
 		return &srcRect;
 	}
 	
@@ -65,6 +70,8 @@ void Ship::tick() {
 }
 
 void Ship::accel(double i) {
+	if (Ship::player.dead) return;
+
 	VelY += i * cos(rotation);
 	VelX += i * sin(rotation);
 
@@ -109,6 +116,7 @@ void Ship::spawnEngineParticle() {
 }
 
 void Ship::rot(double i) {
+	if (Ship::player.dead) return;
 	VelRot += i;
 }
 

@@ -40,7 +40,7 @@ const SDL_FRect Asteroid::getSrcRect() {
         .x = static_cast<float>(skin%8*102+20),
         .y = static_cast<float>(floor(skin/8)*102+30),
         .w = 107,
-    .h = 112,
+        .h = 112,
     };
 }
 const SDL_FRect Asteroid::getDstRect() {

@@ -44,44 +44,28 @@ int Game::draw(SDL_Renderer *render) {
   this->renderer = render;
   tick++;
   tick %= 20;
-  int ret = 0;
-  SDL_Event e;
   SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
 
-  while (SDL_PollEvent(&e) != 0) {
-    switch (e.type) {
-      case SDL_EVENT_QUIT: 
-      ret = SDL_EVENT_QUIT;
-      break;
-    case SDL_EVENT_KEY_DOWN: 
-      pressed.push_back(e.key.key);
-      break;
-    case SDL_EVENT_KEY_UP:
-      pressed.erase(
-          std::remove(pressed.begin(), pressed.end(), e.key.key),
-          pressed.end());
-      break;
-    case SDL_EVENT_WINDOW_RESIZED:
-      SDL_SetRenderLogicalPresentation(render, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
-    break;
-    }
-  }
+  handleEvents();
 
   handleKeyPresses();
 
-  if (!Ship::player.dead) {
-    Ship::player.tick();
-    Asteroid::spawn(score);
-    doCollisions();
-
-    if (tick == 1) {
-      Asteroid::filter();
-      Beam::filter();
-      score++;
-    }
-    
-    Asteroid::tick();
+  doCollisions();
+  
+  if (tick == 1) {
+    Asteroid::filter();
+    Beam::filter();
+    score++;
   }
+
+  Ship::player.tick();
+  
+  Beam::tick();
+  
+  Asteroid::spawn(score);
+  Asteroid::tick();
+
+  Particle::tick();
 
   BackgroundOffset -= .1f;
   animationState += .05f;
@@ -91,28 +75,15 @@ int Game::draw(SDL_Renderer *render) {
 
   renderParticles();
 
-  Particle::tick();
-
   renderAsteroids();
 
   renderBeams();
 
   renderLives();
 
-  
-  SDL_RenderTextureRotated(
-      renderer, ShipsTexture, Ship::player.getSrcRect(animationState),
-      Ship::player.getDstRect(), (Ship::player.rotation - M_PI) * -180 / M_PI,
-      NULL, SDL_FLIP_NONE);
+  renderShip();
 
-  if (Ship::player.isInvis()) {
-    SDL_RenderTextureRotated(renderer, ForceFieldTexture, &ForceFieldSrcRect,
-                     Ship::player.getDstRect(),
-                     (Ship::player.rotation - M_PI) * -180 / M_PI, NULL,
-                     SDL_FLIP_NONE);
-  }
-
-  return ret;
+  return shouldQuit ? SDL_EVENT_QUIT : 0;
 }
 
 Game::~Game() {
@@ -164,7 +135,6 @@ void Game::renderBeams() {
     const SDL_FRect dst = b.getDstRect();
     SDL_RenderTextureRotated(renderer, BeamTexture, NULL, &dst,
                      (b.rot - M_PI) * -180 / M_PI, NULL, SDL_FLIP_NONE);
-    b.tick();
   }
 }
 
@@ -210,5 +180,43 @@ void Game::renderLives() {
     SDL_RenderTexture(renderer, ShipsTexture,
                    Ship::player.getSrcRect(animationState), &dst);
   }
+}
+
+void Game::renderShip() {
+  SDL_RenderTextureRotated(
+      renderer, ShipsTexture, Ship::player.getSrcRect(animationState),
+      Ship::player.getDstRect(), (Ship::player.rotation - M_PI) * -180 / M_PI,
+      NULL, SDL_FLIP_NONE);
+
+  if (Ship::player.isInvis() && !Ship::player.dead) {
+    SDL_RenderTextureRotated(renderer, ForceFieldTexture, &ForceFieldSrcRect,
+                     Ship::player.getDstRect(),
+                     (Ship::player.rotation - M_PI) * -180 / M_PI, NULL,
+                     SDL_FLIP_NONE);
+  }
+}
+
+void Game::handleEvents() {
+  SDL_Event e;
+  
+  while (SDL_PollEvent(&e) != 0) {
+    switch (e.type) {
+      case SDL_EVENT_QUIT: 
+      shouldQuit = true;
+      break;
+    case SDL_EVENT_KEY_DOWN: 
+      pressed.push_back(e.key.key);
+      break;
+    case SDL_EVENT_KEY_UP:
+      pressed.erase(
+          std::remove(pressed.begin(), pressed.end(), e.key.key),
+          pressed.end());
+      break;
+    case SDL_EVENT_WINDOW_RESIZED:
+      SDL_SetRenderLogicalPresentation(renderer, LOGICAL_WIDTH, LOGICAL_HEIGHT, SDL_LOGICAL_PRESENTATION_LETTERBOX);
+    break;
+    }
+  }
+  
 }
 } // namespace AsteroidShooter

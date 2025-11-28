@@ -16,8 +16,9 @@ class Game : public State {
 		SDL_Renderer *renderer;
 		float BackgroundOffset, animationState;
 		int tick;
-		bool dead;
+		bool dead, shouldQuit;
 		std::vector<int> pressed;
-		void doCollisions(), renderBeams(), renderAsteroids(), renderLives(), renderParticles(), handleKeyPresses();
+		void doCollisions(), renderBeams(), renderAsteroids(), renderLives(), renderParticles(), renderShip();
+		void handleEvents(), handleKeyPresses();
 };
 }
