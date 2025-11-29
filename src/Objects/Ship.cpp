@@ -4,7 +4,8 @@
 #include "Particle.hpp"
 #include "Beam.hpp"
 #include "SDL_pixels.h"
-#include <cmath>
+
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <spdlog/spdlog.h>
 

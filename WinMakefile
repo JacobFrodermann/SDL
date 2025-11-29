@@ -2,12 +2,13 @@
 DBGFLAGS = -g
 
 
-COBJFLAGS= -c -O2 -Wall -I/usr/include/SDL3 -D_REENTRANT -g -std=c++17
+COBJFLAGS=-c -O2 -Wall -I/usr/x86_64-w64-mingw32/include -I/usr/x86_64-w64-mingw32/include/SDL3 -D_REENTRANT -DSPDLOG_SHARED_LIB -DSPDLOG_COMPILED_LIB -DSPDLOG_FMT_EXTERNAL -std=c++17 -g 
 
-CFLAGS= -L/usr/lib -lsharpyuv -ljxl -lyuv -lSDL3 -lSDL3_image -lspdlog -lfmt
+CFLAGS = -L/usr/x86_64-w64-mingw32/lib -lSDL3 -lSDL3_image -lspdlog -lfmt 
 
 
-CC=g++
+
+CC=x86_64-w64-mingw32-g++
 
 # path macros
 BIN_PATH := bin

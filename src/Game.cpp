@@ -13,6 +13,7 @@
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
 #include <algorithm>
+#define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstddef>
 #include <spdlog/spdlog.h>
