@@ -83,7 +83,6 @@ void Ship::accel(double i) {
 
 void Ship::spawnEngineParticle() {
 	int colorChoice = Random::rand.nextUInt()%3;
-	spdlog::info(colorChoice);
 	SDL_Color partColor;
 	switch (colorChoice) {
 		case 0:

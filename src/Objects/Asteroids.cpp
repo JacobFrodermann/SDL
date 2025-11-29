@@ -31,6 +31,9 @@ namespace AsteroidShooter {
         if (rot < 6.25) X += 1100;
         VelX = sin(rot) * ASTEROID_SPEED;
         VelY = cos(rot) * ASTEROID_SPEED;
+
+        color = isGolden() ? SDL_Color{235,215,11} : SDL_Color{172, 172,  172};
+
         spdlog::trace("Spawned Asteroid with Skin " + std::to_string(skin) + " Radius " + std::to_string(radius) + " Health " + std::to_string(health));
         Asteroid::asteroids.push_back(*this);
 }
@@ -86,16 +89,27 @@ bool Asteroid::intersects(SDL_FPoint p) {
 
 void Asteroid::damage() {
     health --;
+    
+    Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 10, SDL_Color{color.r,color.g,color.b, 100});
 
-    if (health == 0) removeMe = true;
+    if (health == 0)  {
+        removeMe = true;
             
-    if (skin == 0 || skin == 8 || skin == 16) Ship::player.powerUp();
+        if (isGolden()) {
+            spdlog::info("power up");
+            Ship::player.powerUp();
+        }
             
-    Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 10, SDL_Color{72,72,72, 120});
+           Particle::explosion(X + w/2, Y + h /2, VelX, VelY, 30, SDL_Color{color.r,color.g,color.b, 200});
+    }
 }
 
 bool Asteroid::checkBounds() {
     return X > 2000 || X < -200 || Y > 1200 || Y < -200;
+}
+
+bool Asteroid::isGolden() {
+    return skin == 0 || skin == 8 || skin == 16;
 }
 
 }

@@ -40,7 +40,7 @@ namespace AsteroidShooter {
                 xV + Xoffset, 
                 yV + Yoffset, 
                 power*3, 
-                static_cast<int>(power*sizeOffset), 
+                static_cast<int>((power/2)*sizeOffset), 
                 c
             });
         }
@@ -52,6 +52,9 @@ namespace AsteroidShooter {
         this->xV = xV;
         this->yV = yV;
         this->liveTime = liveTime;
+        this->initialLiveTime = liveTime;
+        if (initialLiveTime == 0) initialLiveTime = 1;
+
         this->size = size;
         this->color = c;
     }
@@ -74,11 +77,19 @@ namespace AsteroidShooter {
 
     SDL_Color Particle::getDrawColor() {
         SDL_Color col = color;
-        col.r = std::clamp(col.r + Random::rand.nextInt() % variation.r - variation.r/2, 0 ,255);
-        col.g = std::clamp(col.g + Random::rand.nextInt() % variation.g - variation.g/2, 0, 255);        
-        col.b = std::clamp(col.b + Random::rand.nextInt() % variation.b - variation.b/2, 0, 255);
-        col.a = std::clamp(col.a + Random::rand.nextInt() % variation.a - variation.a/2, 0, 255);
+        col.r = std::clamp(col.r + vary(variation.r), 0 ,255);
+        col.g = std::clamp(col.g + vary(variation.g), 0, 255);        
+        col.b = std::clamp(col.b + vary(variation.b), 0, 255);
+        col.a = std::clamp(col.a + vary(variation.a) - fade(), 0, 255);
         
         return col;
+    }
+
+    int Particle::vary(int i) {
+        return  Random::rand.nextInt() % i - i/2;
+    }
+
+    int Particle::fade() {
+        return color.a * (1.0 - static_cast<float>(liveTime) / initialLiveTime);
     }
 }

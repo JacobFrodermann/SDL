@@ -17,7 +17,7 @@ namespace AsteroidShooter {
         static bool isPressed(std::vector<SDL_Keycode> pressed, SDL_Keycode key);
         static bool isPressed(std::vector<SDL_Keycode> pressed, std::initializer_list<SDL_Keycode> key);
         static float random_float(float min, float max);
-        static SDL_Texture* loadTexuture(std::string name, SDL_Renderer* renderer);
+        static SDL_Texture* loadTexuture(SDL_Renderer* renderer, std::string name);
         static bool inCircle(SDL_FPoint center, int radius, SDL_FPoint p);
     };
 }

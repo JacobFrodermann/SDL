@@ -11,7 +11,7 @@ namespace AsteroidShooter {
 
 std::vector<Beam> Beam::beams = {};
 
-Beam templates[15]=  {  Beam(0), 
+Beam templates[15] = {  Beam(0), 
     Beam(0), Beam(0),
     Beam(.1), Beam(0), Beam(-.1),
     Beam(.2), Beam(.1), Beam(-.1), Beam(-.2),
@@ -33,14 +33,12 @@ Beam::Beam(float X, float Y, float rotation) {
 }
 
 void Beam::shoot(float X, float Y, float rotation, int power){
-    spdlog::info("Spawned beam at {} {}", X, Y);
-    if (power > 5) power = 5;
-    int offset = 0;
-    for (int i = 0; i<power;i++) {
-        offset += i;
-    }
+    power = std::clamp(power, 1, 5);
+    
+    int offset = power * (power - 1) / 2;
+
     for (int i = offset; i < offset + power; i++) {
-        Beam::beams.push_back(*new Beam(X, Y, templates[i].rot + rotation));
+        Beam::beams.emplace_back(X, Y, templates[i].rot + rotation);
     }
 }
 

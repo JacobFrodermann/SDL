@@ -42,7 +42,7 @@ float Util::random_float(float min, float max) {
     return ((float)rand() / RAND_MAX) * (max - min) + min;
 }
 
-SDL_Texture* Util::loadTexuture(std::string name, SDL_Renderer *renderer) {
+SDL_Texture* Util::loadTexuture(SDL_Renderer *renderer, std::string name) {
     SDL_Surface *surf = IMG_Load(name.c_str());
     if (!surf) {
         spdlog::error(SDL_GetError());
@@ -53,6 +53,7 @@ SDL_Texture* Util::loadTexuture(std::string name, SDL_Renderer *renderer) {
     SDL_DestroySurface(surf);
     return tex;
 }
+
 bool Util::inCircle(SDL_FPoint center, int radius, SDL_FPoint p) {
     int dx = std::abs(center.x - p.x);
     if (dx > radius) return false;

@@ -31,12 +31,14 @@ const SDL_FRect Game::BgRect = SDL_FRect{690, 0, 540, 2160},
 int Game::init(SDL_Renderer *renderer, bool debug) {
   this->debug = debug;
 
-  this->BgTexture = Util::loadTexuture("assets/GameBG.png", renderer);
-  this->ShipsTexture = Util::loadTexuture("assets/Ships.png", renderer);
-  this->BeamTexture = Util::loadTexuture("assets/beam.png", renderer);
-  this->AsteroidsTexture = Util::loadTexuture("assets/asteriodAtlas.png", renderer);
-  this->ForceFieldTexture = Util::loadTexuture("assets/forcefield.png", renderer);
-  this->MenuTexture = Util::loadTexuture("assets/GameMenuBG.png", renderer);
+  this->BgTexture = Util::loadTexuture(renderer, "assets/GameBG.png");
+  this->ShipsTexture = Util::loadTexuture(renderer, "assets/Ships.png");
+  this->BeamTexture = Util::loadTexuture(renderer, "assets/beam.png");
+  this->AsteroidsTexture = Util::loadTexuture(renderer, "assets/asteriodAtlas.png");
+  this->ForceFieldTexture = Util::loadTexuture(renderer, "assets/forcefield.png");
+  this->MenuTexture = Util::loadTexuture(renderer, "assets/GameMenuBG.png");
+  this->RestartTexture = Util::loadTexuture(renderer, "assets/restart.png");
+  this->HomeTexture = Util::loadTexuture(renderer, "assets/HomeButton.png");
 
 
   BackgroundOffset = 0;
@@ -100,6 +102,8 @@ Game::~Game() {
   SDL_DestroyTexture(this->BeamTexture);
   SDL_DestroyTexture(this->AsteroidsTexture);
   SDL_DestroyTexture(this->ForceFieldTexture);
+  SDL_DestroyTexture(this->RestartTexture);
+  SDL_DestroyTexture(this->HomeTexture);
 }
 
 void Game::doCollisions() {
@@ -164,7 +168,7 @@ void Game::renderParticles() {
   SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
   for (Particle &p : Particle::particles) {
     SDL_Color c = p.getDrawColor();
-    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.g, c.a);
+    SDL_SetRenderDrawColor(renderer, c.r, c.g, c.b, c.a);
 
     SDL_FRect r = p.getRect();
     SDL_RenderFillRect(renderer, &r);
@@ -193,7 +197,7 @@ void Game::handleEvents() {
     }
   }
   
-  
+  if (!paused) {
   if (Util::isPressed(pressed, {SDLK_UP, SDLK_W})) 
     Ship::player.accel(ACCEL_MOD);
   if (Util::isPressed(pressed, {SDLK_LEFT, SDLK_A}))
@@ -202,8 +206,11 @@ void Game::handleEvents() {
     Ship::player.rot(-STEERING_MOD);
   if (Util::isPressed(pressed, SDLK_SPACE))
     Ship::player.shoot();
+  } 
+
   if (Util::isPressed(pressed, SDLK_ESCAPE)) {
     paused = !paused;
+    pressed.erase(std::remove(pressed.begin(), pressed.end(), SDLK_ESCAPE));
   }
 }
 
@@ -234,8 +241,16 @@ void Game::renderMenu() {
     return;
   }
 
-  const SDL_FRect dst = {0, 0, 300, 250};
+  SDL_FRect dst = {1920/2-300, 1080/2-250, 600, 500};
 
-  SDL_RenderTexture(renderer, MenuTexture, NULL, &dst);  
+  SDL_RenderTexture(renderer, MenuTexture, NULL, &dst);
+  
+  dst = {850, 700, 220, 60};
+
+  SDL_RenderTexture(renderer, RestartTexture, NULL, &dst);
+
+  dst = {0,0,0,0};
+
+  SDL_RenderTexture(renderer, HomeTexture, NULL, &dst);
 }
 } // namespace AsteroidShooter

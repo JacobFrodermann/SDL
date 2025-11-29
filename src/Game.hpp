@@ -12,7 +12,7 @@ class Game : public State {
 		virtual int init(SDL_Renderer* renderer, bool debug);
 		int score;
 	private:
-		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture, *MenuTexture;
+		SDL_Texture *BgTexture, *ShipsTexture, *BeamTexture, *AsteroidsTexture, *ForceFieldTexture, *MenuTexture, *RestartTexture, *HomeTexture;
 		const static SDL_FRect BgRect, ForceFieldSrcRect;
 		SDL_Renderer *renderer;
 		float BackgroundOffset, animationState;

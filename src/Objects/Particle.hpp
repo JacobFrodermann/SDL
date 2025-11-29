@@ -20,8 +20,9 @@ namespace AsteroidShooter {
             
             static void tick();
         private:
-            SDL_Color color, variation = {10, 10 ,10 ,10};
+            SDL_Color color, variation = {5, 5 ,5 ,10};
             double xV, yV;
-            int liveTime;
+            int initialLiveTime, liveTime;
+            int vary(int), fade();
     };
 }

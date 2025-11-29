@@ -6,10 +6,10 @@
 #include <cstring>
 #include <iostream>
 #include <SDL3/SDL.h>
-#include "Objects/Asteroid.hpp"
 #include <SDL3/SDL_hints.h>
-#include "SDL_video.h"
+#include <SDL3/SDL_video.h>
 #include "Utils/InitError.hpp"
+#include "Utils/Util.hpp"
 #include <SDL3_image/SDL_image.h>
 #include "Menu.hpp"
 #include <memory>
@@ -53,8 +53,7 @@ SDL::~SDL() {
 }
 	
 void SDL::draw() {
-	SDL_Surface * bg = IMG_Load("assets/MainBg.png");
-	SDL_Texture * bgTexture = SDL_CreateTextureFromSurface(m_renderer, bg);
+	SDL_Texture* bgTexture = Util::loadTexuture(m_renderer, "assets/MainBg.png");
 
 	bool quit =	false;
 	int stateCode = MENU_STATE;
@@ -104,6 +103,8 @@ void SDL::draw() {
 		int wait = 1000/FRAMERATE - passed; 
 		SDL_Delay((wait < 0) ? 0 : wait);
 	}
+
+	SDL_DestroyTexture(bgTexture);
 }
 }
 
