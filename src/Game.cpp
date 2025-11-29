@@ -3,22 +3,25 @@
 #include "Objects/Beam.hpp"
 #include "Objects/Ship.hpp"
 #include "Objects/Particle.hpp"
+#include "Settings.hpp"
+#include "Utils/Util.hpp"
+
 #include <SDL3/SDL_keycode.h>
 #include <SDL3/SDL_rect.h>
 #include <SDL3/SDL_render.h>
-#include "SDL_blendmode.h"
-#include "Settings.hpp"
-#include "Utils/Util.hpp"
+#include <SDL3/SDL_blendmode.h>
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_render.h>
 #include <SDL3_image/SDL_image.h>
+
 #include <algorithm>
 #define _USE_MATH_DEFINES
 #include <math.h>
 #include <cstddef>
-#include <spdlog/spdlog.h>
 #include <string>
 #include <vector>
+
+#include <spdlog/spdlog.h>
 
 namespace AsteroidShooter {
 
